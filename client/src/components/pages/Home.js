@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import "../../utilities.css";
 import "./Home.css";
 import AuthController from "../modules/AuthController";
+import PackageList from "./PackageList";
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +25,7 @@ class Home extends Component {
           setUser={this.props.setUser}
           providers={["google"]}
         />
-        <h1>Hello World</h1>
+        {this.props.user ? <PackageList /> : <h1>Maseeh Desk</h1>}
       </>
     );
   }

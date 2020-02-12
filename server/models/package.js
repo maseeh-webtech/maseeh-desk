@@ -16,6 +16,7 @@ const PackageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    trackingNumber: String,
   },
   schemaOptions
 );

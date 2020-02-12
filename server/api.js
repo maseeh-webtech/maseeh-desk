@@ -3,30 +3,41 @@
 | api.js -- server routes
 |--------------------------------------------------------------------------
 |
-| This file defines the routes for your server.
+| This file defines the routes for the server.
 |
 */
 
 const express = require("express");
-
-const logger = require("pino")(); // import pino logger
-
-// import models so we can interact with the database
+const logger = require("pino")(); // For logging
 const User = require("./models/user");
+const Package = require("./models/package");
 
-//add error handling to async endpoints
+// add error handling to async endpoints
 const { decorateRouter } = require("@awaitjs/express");
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = decorateRouter(express.Router());
 
-// |------------------------------|
-// | write your API methods below!|
-// |------------------------------|
-
 router.getAsync("/example", async (req, res, next) => {
   logger.info("Log Hello World");
   res.send({ hello: "world" });
+});
+
+router.get("/packages", (req, res) => {
+  // TODO: filter find based on request params
+  Package.find({}).then((packages) => {
+    res.send(packages);
+  });
+});
+
+router.post("/packages", (req, res) => {
+  const newPackage = new Package({
+    resident: req.body.resident,
+    location: req.body.location,
+    checkedInBy: req.user,
+    trackingNumber: req.trackingNumber,
+  });
+  newPackage.logger.info(`Checked in package: ${savedPackage}`);
 });
 
 // anything else falls to this "not found" case
