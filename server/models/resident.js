@@ -4,6 +4,7 @@ var schemaOptions = {};
 const ResidentSchema = new mongoose.Schema(
   {
     name: String,
+    kerberos: String,
     room: Number,
   },
   schemaOptions

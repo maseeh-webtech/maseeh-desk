@@ -14,7 +14,7 @@
 */
 
 //get environment variables configured
-require('dotenv').config()
+require("dotenv").config();
 
 //import libraries needed for the webserver to work!
 const http = require("http");

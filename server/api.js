@@ -10,6 +10,7 @@
 const express = require("express");
 const logger = require("pino")(); // For logging
 const User = require("./models/user");
+const Resident = require("./models/resident");
 const Package = require("./models/package");
 
 // add error handling to async endpoints
@@ -25,19 +26,39 @@ router.getAsync("/example", async (req, res, next) => {
 
 router.get("/packages", (req, res) => {
   // TODO: filter find based on request params
-  Package.find({}).then((packages) => {
-    res.send(packages);
-  });
+  Package.find({}).then((packages) => res.send(packages));
 });
 
 router.post("/packages", (req, res) => {
-  const newPackage = new Package({
-    resident: req.body.resident,
-    location: req.body.location,
-    checkedInBy: req.user,
-    trackingNumber: req.trackingNumber,
+  logger.info("posting package");
+  Resident.findOne({ kerberos: req.body.kerberos }).then((resident) => {
+    const newPackage = new Package({
+      resident: resident,
+      location: req.body.location,
+      trackingNumber: req.body.trackingNumber,
+      checkedInBy: req.user.id,
+    });
+    newPackage.save().then((savedPackage) => {
+      logger.info(`Checked in package: ${savedPackage}`);
+      res.send(savedPackage);
+    });
   });
-  newPackage.logger.info(`Checked in package: ${savedPackage}`);
+});
+
+router.get("/residents", (req, res) => {
+  Resident.find({}).then((residents) => res.send(residents));
+});
+
+router.post("/residents", (req, res) => {
+  logger.info("posting resident");
+  const newResident = new Resident({
+    name: req.body.name,
+    room: req.body.room,
+  });
+  newResident.save().then((savedResident) => {
+    logger.info(`Added new resident: ${savedResident}`);
+    res.send(savedResident);
+  });
 });
 
 // anything else falls to this "not found" case
