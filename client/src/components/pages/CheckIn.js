@@ -28,7 +28,7 @@ class Checkin extends Component {
   componentDidMount() {}
 
   handleSubmit = () => {
-    post("/api/packages", {
+    post("/api/checkin", {
       kerberos: this.state.kerberos,
       location: this.state.location,
       trackingNumber: this.state.trackingNumber,

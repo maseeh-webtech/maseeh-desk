@@ -26,10 +26,13 @@ router.getAsync("/example", async (req, res, next) => {
 
 router.get("/packages", (req, res) => {
   // TODO: filter find based on request params
-  Package.find({}).then((packages) => res.send(packages));
+  Package.find({})
+    .populate("resident")
+    .populate("checkedInBy")
+    .then((packages) => res.send(packages));
 });
 
-router.post("/packages", (req, res) => {
+router.post("/checkin", (req, res) => {
   logger.info("posting package");
   Resident.findOne({ kerberos: req.body.kerberos }).then((resident) => {
     const newPackage = new Package({
@@ -38,10 +41,20 @@ router.post("/packages", (req, res) => {
       trackingNumber: req.body.trackingNumber,
       checkedInBy: req.user.id,
     });
-    newPackage.save().then((savedPackage) => {
-      logger.info(`Checked in package: ${savedPackage}`);
-      res.send(savedPackage);
-    });
+    newPackage
+      .save()
+      .populate("resident")
+      .then((savedPackage) => {
+        logger.info(`Checked in package: ${savedPackage}`);
+        res.send(savedPackage);
+      });
+  });
+});
+
+router.post("/checkout", (req, res) => {
+  logger.info("checking out package");
+  Package.findByIdAndUpdate(req.body._id, { location: "Checked out" }).then((updatedPackage) => {
+    res.send(updatedPackage);
   });
 });
 

@@ -27,6 +27,7 @@ async function updateResidents() {
 module.exports = {
   init: () => {
     // connect to mongodb
+    mongoose.set("useFindAndModify", false);
     mongoose
       .connect(process.env.MONGO_CONNECTION_URI, {
         useNewUrlParser: true,
