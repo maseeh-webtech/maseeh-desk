@@ -6,11 +6,6 @@ import Home from "./pages/Home.js";
 import "../utilities.css";
 import { socket } from "../client-socket.js";
 
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { fab } from "@fortawesome/free-brands-svg-icons";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-
-library.add(fab, fas);
 /**
  * Define the "App" component as a class.
  */
