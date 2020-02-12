@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { post } from "../../utilities.js";
+import { Button, Input } from "semantic-ui-react";
 
 class LocalAuth extends Component {
   constructor(props) {
@@ -62,37 +63,33 @@ class LocalAuth extends Component {
   render() {
     return (
       <div>
-        <input onChange={this.handleChange} type="email" name="email" placeholder="Email"></input>
-        <input
+        <Input onChange={this.handleChange} type="email" name="email" placeholder="Email" />
+        <Input
           onChange={this.handleChange}
           type="password"
           name="password"
           placeholder="Password"
-        ></input>
+        />
         {this.state.isRegistering ? (
           <>
-            <input
+            <Input
               onChange={this.handleChange}
               type="password"
               name="passwordConfirm"
               placeholder="Confirm Password"
-            ></input>
+            />
 
-            <div className="u-link" onClick={this.attemptRegister}>
-              Register
-            </div>
-            <div className="u-link" onClick={this.toggleRegistrationStatus}>
-              Have an account?
-            </div>
+            <Button content="Register" onClick={this.attemptRegister} />
+            <Button content="Have an account?" onClick={this.toggleRegistrationStatus} />
           </>
         ) : (
           <>
-            <div className="u-link" onClick={this.attemptLogin}>
-              Login
-            </div>
-            <div className="u-link" onClick={this.toggleRegistrationStatus}>
-              Register?
-            </div>
+            <Button content="Log in" className="login-button" onClick={this.attemptLogin} />
+            <Button
+              content="Register"
+              className="login-button"
+              onClick={this.toggleRegistrationStatus}
+            />
           </>
         )}
         <div>{this.state.errorMessage}</div>

@@ -40,12 +40,7 @@ class App extends Component {
     return (
       <>
         <Router>
-          <Home
-            path="/"
-            setUser={this.setUser}
-            logout={this.handleLogout}
-            user={this.state.user}
-          />
+          <Home path="/" setUser={this.setUser} logout={this.handleLogout} user={this.state.user} />
           <NotFound default />
         </Router>
       </>

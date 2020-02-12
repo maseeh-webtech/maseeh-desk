@@ -12,11 +12,10 @@ var schemaOptions = {
 const UserSchema = new mongoose.Schema(
   {
     email: String,
-    password: String
+    password: String,
   },
   schemaOptions
 );
 
 // compile model from schema
 module.exports = mongoose.model("user", UserSchema);
-

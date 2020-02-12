@@ -21,7 +21,6 @@ const bcrypt = require("bcrypt");
 const User = require("./models/user");
 const ALREADY_REGISTERED_ERROR = "email_conflict";
 
-
 router.get("/logout", (req, res) => {
   logger.info(`Logged out user ID ${req.user.id}`);
   req.logout();
@@ -29,7 +28,7 @@ router.get("/logout", (req, res) => {
 });
 
 async function createUser(email, password) {
-  //throws if user exists
+  // Throws if user exists
   if (await User.findOne({ email })) {
     throw Error(ALREADY_REGISTERED_ERROR);
   }
@@ -45,7 +44,7 @@ router.postAsync("/register", async (req, res) => {
   try {
     const user = await createUser(req.body.email, req.body.password);
     req.login(user, function(err) {
-    logger.info(`Local Auth: Registed user ID ${req.user.id}`);
+      logger.info(`Local Auth: Registed user ID ${req.user.id}`);
       req.user.password = undefined;
       res.send(req.user);
     });

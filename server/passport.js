@@ -5,16 +5,14 @@ const User = require("./models/user");
 const bcrypt = require("bcrypt");
 
 function getLocalUser(email) {
-  return User.findOne({ email })
-    .then(user => {
-      if (user) return user.toJSON();
-      return undefined;
-    });
-};
-
+  return User.findOne({ email }).then((user) => {
+    if (user) return user.toJSON();
+    return undefined;
+  });
+}
 
 passport.use(
-  new LocalStrategy({ usernameField: "email", passwordField: "password" }, async function (
+  new LocalStrategy({ usernameField: "email", passwordField: "password" }, async function(
     email,
     password,
     done
@@ -32,7 +30,6 @@ passport.use(
   })
 );
 
-
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -40,7 +37,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
   User.findById(id)
     .select("-password")
-    .then(user => {
+    .then((user) => {
       done(null, user.toJSON());
     });
 });
