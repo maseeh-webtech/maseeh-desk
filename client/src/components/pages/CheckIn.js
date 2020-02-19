@@ -37,7 +37,7 @@ class Checkin extends Component {
 
   render() {
     return (
-      <>
+      <div className="checkin-container">
         <h1>Check in packages</h1>
         <Dropdown
           placeholder="Resident"
@@ -68,7 +68,7 @@ class Checkin extends Component {
           disabled={null}
           onClick={this.handleSubmit}
         />
-      </>
+      </div>
     );
   }
 }

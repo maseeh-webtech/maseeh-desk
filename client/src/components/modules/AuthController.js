@@ -36,11 +36,9 @@ class AuthController extends Component {
     return (
       <>
         {loggedIn ? (
-          <Button content="Log out" onClick={this.logout} />
+          <Button content="Log out" className="auth-logout" onClick={this.logout} />
         ) : (
-          <>
-            <LocalAuth login={this.login} disabled={disabled} />
-          </>
+          <LocalAuth login={this.login} disabled={disabled} />
         )}
       </>
     );

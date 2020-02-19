@@ -1,1 +1,44 @@
-/* Fill me in :) */
+.app-container {
+  padding: 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-logout {
+  height: 36px;
+}
+
+.header-icon {
+  padding-right: 7px;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-buttons {
+  padding: 10px 0;
+}
+
+.login-input {
+  width: 30vw;
+  padding: 5px 0;
+}
+
+.packages-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkin-button {
+  height: 36px;
+}
+
+.checkin-container {
+  height: 50vh;
+  padding: 20px;
+}

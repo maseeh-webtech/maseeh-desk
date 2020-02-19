@@ -43,11 +43,12 @@ router.post("/checkin", (req, res) => {
     });
     newPackage
       .save()
-      .populate("resident")
+      .populate("checkedInBy")
       .then((savedPackage) => {
         logger.info(`Checked in package: ${savedPackage}`);
         res.send(savedPackage);
-      });
+      })
+      .catch((err) => logger.error(err));
   });
 });
 

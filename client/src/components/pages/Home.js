@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 import "../../utilities.css";
 import "./Home.css";
@@ -8,25 +10,32 @@ import PackageList from "./PackageList";
 class Home extends Component {
   constructor(props) {
     super(props);
-    // Initialize Default State
     this.state = {};
   }
 
-  componentDidMount() {
-    // remember -- api calls go here!
-  }
+  componentDidMount() {}
 
   render() {
+    const authController = (
+      <AuthController
+        logout={this.props.logout}
+        loggedIn={this.props.user !== undefined}
+        setUser={this.props.setUser}
+        providers={["google"]}
+      />
+    );
     return (
-      <>
-        <AuthController
-          logout={this.props.logout}
-          loggedIn={this.props.user !== undefined}
-          setUser={this.props.setUser}
-          providers={["google"]}
-        />
-        {this.props.user ? <PackageList /> : <h1>Maseeh Desk</h1>}
-      </>
+      <div className="app-container">
+        <header>
+          <h1 className="header">
+            <FontAwesomeIcon icon={faBoxOpen} className="header-icon" />
+            Maseeh Desk
+          </h1>
+          {this.props.user && authController}
+        </header>
+        {!this.props.user && authController}
+        {this.props.user ? <PackageList /> : null}
+      </div>
     );
   }
 }

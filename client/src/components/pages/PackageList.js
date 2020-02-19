@@ -54,8 +54,12 @@ class PackageList extends Component {
         <Modal open={this.state.checkInOpen} onClose={this.closeCheckIn}>
           <Checkin closeCheckIn={this.closeCheckIn} residents={this.state.residents} />
         </Modal>
-        <h1>Packages</h1>
-        <Button onClick={this.openCheckIn}>Check in package</Button>
+        <div className="packages-header">
+          <h1>Packages</h1>
+          <Button className="checkin-button" onClick={this.openCheckIn}>
+            Check in package
+          </Button>
+        </div>
         {this.state.packages ? (
           <Table celled>
             <Table.Header>

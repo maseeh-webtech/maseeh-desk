@@ -7,16 +7,12 @@ var schemaOptions = {
 
 const PackageSchema = new mongoose.Schema(
   {
-    resident: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "resident",
-    },
+    resident: { type: mongoose.Schema.Types.ObjectId, ref: "resident" },
     location: String,
-    checkedInBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
+    checkedInBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     trackingNumber: String,
+    checkedOutBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+    checkedOutTime: Date,
   },
   schemaOptions
 );

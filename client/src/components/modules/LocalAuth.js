@@ -62,9 +62,16 @@ class LocalAuth extends Component {
 
   render() {
     return (
-      <div>
-        <Input onChange={this.handleChange} type="email" name="email" placeholder="Email" />
+      <div className="auth-container">
         <Input
+          className="login-input"
+          onChange={this.handleChange}
+          type="email"
+          name="email"
+          placeholder="Email"
+        />
+        <Input
+          className="login-input"
           onChange={this.handleChange}
           type="password"
           name="password"
@@ -73,24 +80,26 @@ class LocalAuth extends Component {
         {this.state.isRegistering ? (
           <>
             <Input
+              className="login-input"
               onChange={this.handleChange}
               type="password"
               name="passwordConfirm"
               placeholder="Confirm Password"
             />
-
-            <Button content="Register" onClick={this.attemptRegister} />
-            <Button content="Have an account?" onClick={this.toggleRegistrationStatus} />
+            <div className="auth-buttons">
+              <Button content="Register" onClick={this.attemptRegister} />
+              <Button content="Have an account?" onClick={this.toggleRegistrationStatus} />
+            </div>
           </>
         ) : (
-          <>
+          <div className="auth-buttons">
             <Button content="Log in" className="login-button" onClick={this.attemptLogin} />
             <Button
               content="Register"
               className="login-button"
               onClick={this.toggleRegistrationStatus}
             />
-          </>
+          </div>
         )}
         <div>{this.state.errorMessage}</div>
       </div>
