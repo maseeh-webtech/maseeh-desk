@@ -11,7 +11,7 @@ var schemaOptions = {
 
 const UserSchema = new mongoose.Schema(
   {
-    email: String,
+    username: String,
     password: String,
   },
   schemaOptions

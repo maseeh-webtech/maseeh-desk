@@ -4,20 +4,20 @@ var LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const bcrypt = require("bcrypt");
 
-function getLocalUser(email) {
-  return User.findOne({ email }).then((user) => {
+function getLocalUser(username) {
+  return User.findOne({ username }).then((user) => {
     if (user) return user.toJSON();
     return undefined;
   });
 }
 
 passport.use(
-  new LocalStrategy({ usernameField: "email", passwordField: "password" }, async function(
-    email,
+  new LocalStrategy({ usernameField: "username", passwordField: "password" }, async function(
+    username,
     password,
     done
   ) {
-    const userJson = await getLocalUser(email);
+    const userJson = await getLocalUser(username);
     if (userJson) {
       const match = await bcrypt.compare(password, userJson.password);
       if (!match) {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Input, Dropdown } from "semantic-ui-react";
+import { Button, Input, Dropdown, Form, Message } from "semantic-ui-react";
 import { post } from "../../utilities";
 
 const locations = [
@@ -22,22 +22,27 @@ class Checkin extends Component {
       kerberos: null,
       location: null,
       trackingNumber: null,
+      submitError: null,
     };
   }
 
   componentDidMount() {}
 
   handleSubmit = () => {
-    post("/api/checkin", {
-      kerberos: this.state.kerberos,
-      location: this.state.location,
-      trackingNumber: this.state.trackingNumber,
-    }).then((res) => console.log(res));
+    if (!this.state.kerberos) {
+      this.setState({ submitError: "Please select a resident" });
+    } else {
+      post("/api/checkin", {
+        kerberos: this.state.kerberos,
+        location: this.state.location,
+        trackingNumber: this.state.trackingNumber,
+      }).then((res) => console.log(res));
+    }
   };
 
   render() {
     return (
-      <div className="checkin-container">
+      <Form className="checkin-container">
         <h1>Check in packages</h1>
         <Dropdown
           placeholder="Resident"
@@ -68,7 +73,9 @@ class Checkin extends Component {
           disabled={null}
           onClick={this.handleSubmit}
         />
-      </div>
+        {/* If any field is filled out wrong, produce an error message */}
+        {this.state.submitError && <Message negative header={this.state.submitError} />}
+      </Form>
     );
   }
 }

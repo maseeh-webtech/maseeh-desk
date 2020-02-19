@@ -19,7 +19,7 @@ const socket = require("./server-socket");
 const SALT_ROUNDS = 10;
 const bcrypt = require("bcrypt");
 const User = require("./models/user");
-const ALREADY_REGISTERED_ERROR = "email_conflict";
+const ALREADY_REGISTERED_ERROR = "username_conflict";
 
 router.get("/logout", (req, res) => {
   logger.info(`Logged out user ID ${req.user.id}`);
@@ -27,14 +27,14 @@ router.get("/logout", (req, res) => {
   res.send({});
 });
 
-async function createUser(email, password) {
+async function createUser(username, password) {
   // Throws if user exists
-  if (await User.findOne({ email })) {
+  if (await User.findOne({ username })) {
     throw Error(ALREADY_REGISTERED_ERROR);
   }
   const hashedSaltedPwd = await bcrypt.hash(password, SALT_ROUNDS);
   const newUser = new User({
-    email: email,
+    username: username,
     password: hashedSaltedPwd,
   });
   return newUser.save();
@@ -42,7 +42,7 @@ async function createUser(email, password) {
 
 router.postAsync("/register", async (req, res) => {
   try {
-    const user = await createUser(req.body.email, req.body.password);
+    const user = await createUser(req.body.username, req.body.password);
     req.login(user, function(err) {
       logger.info(`Local Auth: Registed user ID ${req.user.id}`);
       req.user.password = undefined;

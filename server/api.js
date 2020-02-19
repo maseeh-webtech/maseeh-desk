@@ -43,7 +43,7 @@ router.post("/checkin", (req, res) => {
     });
     newPackage
       .save()
-      .populate("checkedInBy")
+      // .populate("checkedInBy")
       .then((savedPackage) => {
         logger.info(`Checked in package: ${savedPackage}`);
         res.send(savedPackage);
