@@ -13,6 +13,7 @@ const PackageSchema = new mongoose.Schema(
     trackingNumber: String,
     checkedOutBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
     checkedOutTime: Date,
+    expireAt: Date,
   },
   schemaOptions
 );

@@ -9,43 +9,41 @@
 
 const express = require("express");
 const logger = require("pino")(); // For logging
-const User = require("./models/user");
 const Resident = require("./models/resident");
 const Package = require("./models/package");
 
-// add error handling to async endpoints
-const { decorateRouter } = require("@awaitjs/express");
-
 // api endpoints: all these paths will be prefixed with "/api/"
-const router = decorateRouter(express.Router());
-
-router.getAsync("/example", async (req, res, next) => {
-  logger.info("Log Hello World");
-  res.send({ hello: "world" });
-});
+const router = express.Router();
 
 router.get("/packages", (req, res) => {
-  // TODO: filter find based on request params
-  Package.find({})
+  let query;
+  if (req.query.noCheckedOut) {
+    query = { location: { $ne: "Checked out" } };
+  } else {
+    query = {};
+  }
+  Package.find(query)
     .populate("resident")
     .populate("checkedInBy")
     .then((packages) => res.send(packages));
 });
 
 router.post("/checkin", (req, res) => {
-  logger.info("posting package");
+  // By default, delete old packages after 2 years
+  const expireTime = new Date(Date.now());
+  expireTime.setMonth(expireTime.getMonth() + 24);
   Resident.findOne({ kerberos: req.body.kerberos }).then((resident) => {
     const newPackage = new Package({
       resident: resident,
       location: req.body.location,
       trackingNumber: req.body.trackingNumber,
       checkedInBy: req.user.id,
+      expireAt: expireTime,
     });
     newPackage
       .save()
       // .populate("checkedInBy")
       .then((savedPackage) => {
-        logger.info(`Checked in package: ${savedPackage}`);
         res.send(savedPackage);
       })
       .catch((err) => logger.error(err));
@@ -53,10 +51,14 @@ router.post("/checkin", (req, res) => {
 });
 
 router.post("/checkout", (req, res) => {
-  logger.info("checking out package");
-  Package.findByIdAndUpdate(req.body._id, { location: "Checked out" }).then((updatedPackage) => {
-    res.send(updatedPackage);
-  });
+  // Delete old packages after 3 months of being checked out
+  const expireTime = new Date(Date.now());
+  expireTime.setMonth(expireTime.getMonth() + 3);
+  Package.findByIdAndUpdate(req.body._id, { location: "Checked out", expireAt: expireTime }).then(
+    (updatedPackage) => {
+      res.send(updatedPackage);
+    }
+  );
 });
 
 router.get("/residents", (req, res) => {
@@ -64,13 +66,11 @@ router.get("/residents", (req, res) => {
 });
 
 router.post("/residents", (req, res) => {
-  logger.info("posting resident");
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,
   });
   newResident.save().then((savedResident) => {
-    logger.info(`Added new resident: ${savedResident}`);
     res.send(savedResident);
   });
 });

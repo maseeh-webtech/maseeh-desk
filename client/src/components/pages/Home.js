@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 
 import "../../utilities.css";
-import "./Home.css";
+import "./styles.css";
 import AuthController from "../modules/AuthController";
 import PackageList from "./PackageList";
 

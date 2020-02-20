@@ -16,7 +16,7 @@ class PackageList extends Component {
 
   componentDidMount() {
     // Populate the main package list
-    get("/api/packages").then((packages) => {
+    get("/api/packages", { noCheckedOut: true }).then((packages) => {
       this.setState({ packages });
     });
 
@@ -38,26 +38,24 @@ class PackageList extends Component {
     this.setState({ checkInOpen: true });
   };
 
-  removePackage = (toBeRemoved) => {
-    console.log(`removing: ${toBeRemoved}`);
-    const filteredPackages = this.state.packages.filter((pack) => {
-      console.log(pack);
-      return pack.props._id != toBeRemoved;
-    });
-    console.log(filteredPackages.length == this.state.packages.length);
-    this.setState({ packages: filteredPackages });
+  addPackage = (pack) => {
+    this.setState({ packages: this.state.packages.concat([pack]) });
   };
 
   render() {
     return (
       <>
         <Modal open={this.state.checkInOpen} onClose={this.closeCheckIn}>
-          <Checkin closeCheckIn={this.closeCheckIn} residents={this.state.residents} />
+          <Checkin
+            closeCheckIn={this.closeCheckIn}
+            residents={this.state.residents}
+            addPackage={this.addPackage}
+          />
         </Modal>
         <div className="packages-header">
           <h1>Packages</h1>
-          <Button className="checkin-button" onClick={this.openCheckIn}>
-            Check in package
+          <Button primary className="checkin-button" onClick={this.openCheckIn}>
+            Check in packages
           </Button>
         </div>
         {this.state.packages ? (

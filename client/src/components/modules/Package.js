@@ -1,21 +1,26 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Table, Button } from "semantic-ui-react";
 import { post } from "../../utilities";
 
-class Package extends Component {
+class Package extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.state = {
+      show: true,
+    };
   }
 
   handleCheckout = () => {
     post("/api/checkout", { ...this.props.package, location: "Checked out" }).then((res) => {
-      this.props.removePackage(res._id);
+      console.log(res);
+      this.setState({ show: false });
     });
   };
 
   render() {
     return (
-      <Table.Row>
+      <Table.Row style={this.state.show ? null : { display: "none" }}>
         <Table.Cell>
           {this.props.package.resident ? this.props.package.resident.name : null}
         </Table.Cell>

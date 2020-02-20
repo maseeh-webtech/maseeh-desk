@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 import { Button, Input, Dropdown, Form, Message } from "semantic-ui-react";
 import { post } from "../../utilities";
 
@@ -15,51 +15,83 @@ const locations = [
   { key: 9, value: "Perishable", text: "Perishable" },
 ];
 
+// As small as this component is, PureComponent is a necessary performance
+//   optimization, since the long residents list takes long enough to rerender
+//   that typing in the tracking number box feels glacial.
+class ResidentDropdown extends PureComponent {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <Dropdown
+        placeholder="Resident"
+        search
+        selection
+        onChange={(e, { value }) => this.props.setKerb(value)}
+        options={this.props.residents}
+        value={this.props.kerberos}
+      />
+    );
+  }
+}
+
 class Checkin extends Component {
   constructor(props) {
     super(props);
     this.state = {
       kerberos: null,
       location: null,
-      trackingNumber: null,
-      submitError: null,
+      trackingNumber: "",
+      submitMessage: null,
+      disableCheckin: false,
     };
   }
 
   componentDidMount() {}
 
   handleSubmit = () => {
-    if (!this.state.kerberos) {
-      this.setState({ submitError: "Please select a resident" });
-    } else {
-      post("/api/checkin", {
-        kerberos: this.state.kerberos,
-        location: this.state.location,
-        trackingNumber: this.state.trackingNumber,
-      }).then((res) => console.log(res));
-    }
+    this.setState({ disableCheckin: true });
+    post("/api/checkin", {
+      kerberos: this.state.kerberos,
+      location: this.state.location,
+      trackingNumber: this.state.trackingNumber,
+    }).then((res) => {
+      this.props.addPackage(res);
+      this.setState({
+        kerberos: null,
+        location: null,
+        trackingNumber: "",
+        disableCheckin: false,
+      });
+    });
+  };
+
+  setKerb = (newKerb) => {
+    this.setState({ kerberos: newKerb });
   };
 
   render() {
     return (
       <Form className="checkin-container">
         <h1>Check in packages</h1>
-        <Dropdown
-          placeholder="Resident"
-          search
-          selection
-          onChange={(e, { value }) => this.setState({ kerberos: value })}
-          options={this.props.residents}
+        <ResidentDropdown
+          residents={this.props.residents}
+          kerberos={this.state.kerberos}
+          setKerb={this.setKerb}
         />
         <Dropdown
           placeholder="Location"
           selection
           onChange={(e, { value }) => this.setState({ location: value })}
           options={locations}
+          value={this.state.location}
         />
         <Input
           placeholder="Tracking number"
           onChange={(event) => this.setState({ trackingNumber: event.target.value })}
+          value={this.state.trackingNumber}
         />
         <br />
         <Button negative onClick={this.props.closeCheckIn}>
@@ -70,11 +102,15 @@ class Checkin extends Component {
           content="Check in"
           icon="checkmark"
           labelPosition="right"
-          disabled={null}
+          disabled={
+            !this.state.kerberos ||
+            !this.state.location ||
+            !this.state.trackingNumber ||
+            this.state.disableCheckin
+          }
           onClick={this.handleSubmit}
         />
-        {/* If any field is filled out wrong, produce an error message */}
-        {this.state.submitError && <Message negative header={this.state.submitError} />}
+        {this.state.submitMessage && <Message content={this.state.submitMessage} />}
       </Form>
     );
   }
