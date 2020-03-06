@@ -1,3 +1,4 @@
+/* Application-wide styles */
 .app-container {
   padding: 20px;
 }
@@ -7,12 +8,12 @@ header {
   justify-content: space-between;
 }
 
-.auth-logout {
-  height: 36px;
-}
-
 .header-icon {
   padding-right: 7px;
+}
+
+.auth-logout {
+  height: 36px;
 }
 
 .auth-container {
@@ -34,11 +35,28 @@ header {
   justify-content: space-between;
 }
 
-.checkin-button {
+.packages-checkin-button {
   height: 36px;
 }
 
+/* Check in popup styles */
 .checkin-container {
-  height: 50vh;
-  padding: 20px;
+  height: 30vh;
+  padding: 3%;
+}
+
+.checkin-form {
+  padding: 2%;
+}
+
+.checkin-resident {
+  width: 300px;
+}
+
+.checkin-tracking {
+  width: 300px;
+}
+
+.checkin-close {
+  float: right;
 }

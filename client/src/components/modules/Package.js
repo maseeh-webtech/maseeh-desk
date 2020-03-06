@@ -26,7 +26,7 @@ class Package extends PureComponent {
         </Table.Cell>
         <Table.Cell>{this.props.package.location}</Table.Cell>
         <Table.Cell>{this.props.package.trackingNumber}</Table.Cell>
-        <Table.Cell>
+        <Table.Cell collapsing>
           <Button onClick={this.handleCheckout} primary>
             Check out
           </Button>

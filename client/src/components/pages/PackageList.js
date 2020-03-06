@@ -54,7 +54,7 @@ class PackageList extends Component {
         </Modal>
         <div className="packages-header">
           <h1>Packages</h1>
-          <Button primary className="checkin-button" onClick={this.openCheckIn}>
+          <Button primary className="packages-checkin-button" onClick={this.openCheckIn}>
             Check in packages
           </Button>
         </div>
