@@ -1,6 +1,8 @@
 /* Application-wide styles */
 .app-container {
   padding: 20px;
+  position: relative;
+  min-height: 100vh;
 }
 
 header {
@@ -10,6 +12,10 @@ header {
 
 .header-icon {
   padding-right: 7px;
+}
+
+.header-admin {
+  height: 36px;
 }
 
 .auth-logout {
@@ -59,4 +65,14 @@ header {
 
 .checkin-close {
   float: right;
+}
+
+footer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+.footer-content {
+  text-align: center;
 }
