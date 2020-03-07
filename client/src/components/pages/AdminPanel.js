@@ -45,7 +45,7 @@ class AdminPanel extends Component {
       </>
     );
     return (
-      <div className="app-container">
+      <div>
         <h1>Admin Panel</h1>
         {this.props.user ? (
           this.props.user.admin ? (

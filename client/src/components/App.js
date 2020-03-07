@@ -48,7 +48,7 @@ class App extends Component {
       />
     );
     return (
-      <>
+      <div className="app-container">
         <header>
           <h1 className="header">
             <FontAwesomeIcon icon={faBoxOpen} className="header-icon" />
@@ -83,7 +83,7 @@ class App extends Component {
         <footer>
           <p className="footer-content">Questions or comments? Email maseeh-webtech@mit.edu!</p>
         </footer>
-      </>
+      </div>
     );
   }
 }

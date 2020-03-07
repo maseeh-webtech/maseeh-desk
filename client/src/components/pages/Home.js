@@ -24,7 +24,7 @@ class Home extends Component {
       />
     );
     return (
-      <div className="app-container">
+      <div>
         {this.props.user ? (
           this.props.user.deskworker ? (
             this.props.user ? (

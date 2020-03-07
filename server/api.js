@@ -9,9 +9,12 @@
 
 const express = require("express");
 const logger = require("pino")(); // For logging
+const nodemailer = require("nodemailer");
 const Resident = require("./models/resident");
 const Package = require("./models/package");
 const User = require("./models/user");
+
+require("dotenv").config();
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
@@ -46,6 +49,33 @@ router.get("/packages", [isDeskWorker], (req, res) => {
     .then((packages) => res.send(packages));
 });
 
+const sendEmail = (newPackage) => {
+  const transporter = nodemailer.createTransport({
+    host: "outgoing.mit.edu",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.KERBEROS,
+      pass: process.env.KERBEROS_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: "maseeh-desk@mit.edu",
+    // to: `${newPackage.resident.kerberos}@mit.edu`,
+    to: "kyeb@mit.edu",
+    subject: "test email",
+    text: `this is a test email and this is a package \n\n ${newPackage}`,
+  };
+  logger.info("Sending email");
+
+  transporter.sendMail(mailOptions, (err) => {
+    if (err) {
+      logger.error(err);
+    }
+  });
+};
+
 router.post("/checkin", [isDeskWorker], (req, res) => {
   // By default, delete old packages after 2 years
   const expireTime = new Date(Date.now());
@@ -62,6 +92,7 @@ router.post("/checkin", [isDeskWorker], (req, res) => {
       .save()
       // .populate("checkedInBy")
       .then((savedPackage) => {
+        sendEmail(savedPackage);
         res.send(savedPackage);
       })
       .catch((err) => logger.error(err));
