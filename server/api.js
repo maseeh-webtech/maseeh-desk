@@ -61,13 +61,15 @@ const sendEmail = (newPackage) => {
   });
 
   const mailOptions = {
-    from: "maseeh-desk@mit.edu",
-    // to: `${newPackage.resident.kerberos}@mit.edu`,
-    to: "kyeb@mit.edu",
-    subject: "test email",
-    text: `this is a test email and this is a package \n\n ${newPackage}`,
+    from: "Maseeh Desk <maseeh-desk@mit.edu>",
+    to: `${newPackage.resident.kerberos}@mit.edu`,
+    subject: `[Maseeh Desk] Package arrived: ${newPackage.trackingNumber}`,
+    text:
+      `You have a package at the Maseeh Hall front desk!\n\n` +
+      `Tracking number: ${newPackage.trackingNumber}\n` +
+      `Delivered: ${newPackage.checkedInTime}\n` +
+      `Location: ${newPackage.location}\n`,
   };
-  logger.info("Sending email");
 
   transporter.sendMail(mailOptions, (err) => {
     if (err) {
