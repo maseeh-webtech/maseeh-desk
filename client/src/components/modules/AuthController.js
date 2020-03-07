@@ -24,7 +24,6 @@ class AuthController extends Component {
   };
 
   logout = () => {
-    console.log("logging out...");
     get("/auth/logout").then(() => {
       this.props.logout();
     });

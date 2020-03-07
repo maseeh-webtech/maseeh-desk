@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     username: String,
     password: String,
     admin: Boolean,
+    deskworker: Boolean,
   },
   schemaOptions
 );

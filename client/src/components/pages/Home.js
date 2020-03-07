@@ -4,6 +4,7 @@ import "../../utilities.css";
 import "./styles.css";
 import AuthController from "../modules/AuthController";
 import PackageList from "./PackageList";
+import { Message } from "semantic-ui-react";
 
 class Home extends Component {
   constructor(props) {
@@ -23,12 +24,22 @@ class Home extends Component {
       />
     );
     return (
-      <>
-        <div className="app-container">
-          {!this.props.user && authController}
-          {this.props.user ? <PackageList /> : null}
-        </div>
-      </>
+      <div className="app-container">
+        {this.props.user ? (
+          this.props.user.deskworker ? (
+            this.props.user ? (
+              <PackageList />
+            ) : null
+          ) : (
+            <>
+              <h1>Packages</h1>
+              <Message negative>You must be an desk worker to view this page.</Message>
+            </>
+          )
+        ) : (
+          authController
+        )}
+      </div>
     );
   }
 }

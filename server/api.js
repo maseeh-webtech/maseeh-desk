@@ -11,11 +11,29 @@ const express = require("express");
 const logger = require("pino")(); // For logging
 const Resident = require("./models/resident");
 const Package = require("./models/package");
+const User = require("./models/user");
 
 // api endpoints: all these paths will be prefixed with "/api/"
 const router = express.Router();
 
-router.get("/packages", (req, res) => {
+// Auth middleware
+const isAdmin = (req, res, next) => {
+  if (!req.user || !req.user.admin) {
+    res.status(403).send({ msg: "Admin permissions required" });
+  } else {
+    next();
+  }
+};
+
+const isDeskWorker = (req, res, next) => {
+  if (!req.user || !req.user.deskworker) {
+    res.status(403).send({ msg: "Desk worker permissions required" });
+  } else {
+    next();
+  }
+};
+
+router.get("/packages", [isDeskWorker], (req, res) => {
   let query;
   if (req.query.noCheckedOut) {
     query = { location: { $ne: "Checked out" } };
@@ -28,7 +46,7 @@ router.get("/packages", (req, res) => {
     .then((packages) => res.send(packages));
 });
 
-router.post("/checkin", (req, res) => {
+router.post("/checkin", [isDeskWorker], (req, res) => {
   // By default, delete old packages after 2 years
   const expireTime = new Date(Date.now());
   expireTime.setMonth(expireTime.getMonth() + 24);
@@ -50,29 +68,77 @@ router.post("/checkin", (req, res) => {
   });
 });
 
-router.post("/checkout", (req, res) => {
+router.post("/checkout", [isDeskWorker], (req, res) => {
   // Delete old packages after 3 months of being checked out
   const expireTime = new Date(Date.now());
   expireTime.setMonth(expireTime.getMonth() + 3);
-  Package.findByIdAndUpdate(req.body._id, { location: "Checked out", expireAt: expireTime }).then(
-    (updatedPackage) => {
+  Package.findByIdAndUpdate(req.body._id, { location: "Checked out", expireAt: expireTime })
+    .then((updatedPackage) => {
       res.send(updatedPackage);
-    }
-  );
+    })
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
 });
 
-router.get("/residents", (req, res) => {
+router.get("/residents", [isDeskWorker], (req, res) => {
   Resident.find({}).then((residents) => res.send(residents));
 });
 
-router.post("/residents", (req, res) => {
+router.post("/residents", [isDeskWorker], (req, res) => {
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,
   });
-  newResident.save().then((savedResident) => {
-    res.send(savedResident);
-  });
+  newResident
+    .save()
+    .then((savedResident) => {
+      res.send(savedResident);
+    })
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
+});
+
+router.get("/users", [isAdmin], (_req, res) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
+});
+
+router.post("/user/admin", [isAdmin], (req, res) => {
+  if (!req.user || !req.user.admin) {
+    res.status(403).send({ msg: "Admin permissions required" });
+    return;
+  }
+  User.findByIdAndUpdate(req.body.id, { admin: req.body.admin })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
+});
+
+router.post("/user/deskworker", [isAdmin], (req, res) => {
+  User.findByIdAndUpdate(req.body.id, { deskworker: req.body.deskworker })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
+});
+
+router.post("/user/delete", [isAdmin], (req, res) => {
+  User.findByIdAndDelete(req.body.id)
+    .then(() => {
+      res.send({ success: true });
+    })
+    .catch(() => res.send({ success: false }));
 });
 
 // anything else falls to this "not found" case

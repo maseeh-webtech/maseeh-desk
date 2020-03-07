@@ -36,6 +36,8 @@ async function createUser(username, password) {
   const newUser = new User({
     username: username,
     password: hashedSaltedPwd,
+    admin: false,
+    deskworker: false,
   });
   return newUser.save();
 }

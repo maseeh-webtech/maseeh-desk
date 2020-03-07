@@ -13,7 +13,6 @@ class Package extends PureComponent {
 
   handleCheckout = () => {
     post("/api/checkout", { ...this.props.package, location: "Checked out" }).then((res) => {
-      console.log(res);
       this.setState({ show: false });
     });
   };

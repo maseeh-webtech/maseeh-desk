@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Router } from "@reach/router";
+import { Router, navigate, Match } from "@reach/router";
 import { Button } from "semantic-ui-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +35,7 @@ class App extends Component {
 
   handleLogout = () => {
     this.setState({ user: undefined });
+    navigate("/");
   };
 
   render() {
@@ -55,7 +56,21 @@ class App extends Component {
           </h1>
           {this.state.user && (
             <div className="header-buttons">
-              {this.state.user.admin && <Button className="header-admin">Admin</Button>}
+              {this.state.user.admin && (
+                <Match path="/admin">
+                  {(props) =>
+                    props.match ? (
+                      <Button className="header-admin" onClick={() => navigate("/")}>
+                        Packages
+                      </Button>
+                    ) : (
+                      <Button className="header-admin" onClick={() => navigate("/admin")}>
+                        Admin panel
+                      </Button>
+                    )
+                  }
+                </Match>
+              )}
               {authController}
             </div>
           )}
