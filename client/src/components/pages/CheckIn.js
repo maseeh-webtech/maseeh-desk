@@ -74,14 +74,14 @@ class Checkin extends Component {
 
   render() {
     return (
-      <>
-        <Form className="checkin-container">
-          <h1>
-            Check in packages{" "}
-            <div className="checkin-close">
-              <Button onClick={this.props.closeCheckIn}>Close</Button>
-            </div>
-          </h1>
+      <div className="checkin-container">
+        <h1>
+          Check in packages
+          <div className="checkin-close">
+            <Button onClick={this.props.closeCheckIn}>Close</Button>
+          </div>
+        </h1>
+        <Form>
           <div className="checkin-form checkin-resident">
             <ResidentDropdown
               className="checkin-resident"
@@ -125,7 +125,7 @@ class Checkin extends Component {
             />
           </div>
         </Form>
-      </>
+      </div>
     );
   }
 }
