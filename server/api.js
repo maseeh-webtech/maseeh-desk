@@ -46,7 +46,10 @@ router.get("/packages", [isDeskWorker], (req, res) => {
   Package.find(query)
     .populate("resident")
     .populate("checkedInBy")
-    .then((packages) => res.send(packages));
+    .then((packages) => {
+      packages.sort((a, b) => a.resident.name > b.resident.name);
+      res.send(packages);
+    });
 });
 
 const sendEmail = (newPackage) => {

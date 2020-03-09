@@ -1,6 +1,7 @@
 /* Application-wide styles */
 .app-container {
   padding: 20px;
+  padding-bottom: 60px;
   position: relative;
   min-height: 100vh;
 }

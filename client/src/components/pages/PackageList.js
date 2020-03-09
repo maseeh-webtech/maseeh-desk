@@ -70,9 +70,14 @@ class PackageList extends Component {
             </Table.Header>
 
             <Table.Body>
-              {this.state.packages.map((pack) => {
-                return <Package key={pack._id} package={pack} removePackage={this.removePackage} />;
-              })}
+              {this.state.packages
+                // Currently sorting on frontend. Move to backend in future.
+                .sort((a, b) => a.resident.name > b.resident.name)
+                .map((pack) => {
+                  return (
+                    <Package key={pack._id} package={pack} removePackage={this.removePackage} />
+                  );
+                })}
             </Table.Body>
           </Table>
         ) : (

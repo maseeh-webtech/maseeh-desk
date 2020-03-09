@@ -3,17 +3,28 @@ import { Button, Input, Dropdown, Form } from "semantic-ui-react";
 import { post } from "../../utilities";
 
 const locations = [
-  { key: 0, value: "At desk", text: "At desk" },
-  { key: 1, value: "Floor", text: "Floor" },
-  { key: 2, value: "Perishable", text: "Perishable" },
-  { key: 3, value: "BG", text: "BG" },
-  { key: 4, value: "B1", text: "B1" },
-  { key: 5, value: "B2", text: "B2" },
-  { key: 6, value: "B3", text: "B3" },
-  { key: 7, value: "B4", text: "B4" },
-  { key: 8, value: "B5", text: "B5" },
-  { key: 9, value: "B6", text: "B6" },
+  { value: "At desk", text: "At desk" },
+  { value: "Floor", text: "Floor" },
+  { value: "Perishable", text: "Perishable" },
+  { value: "G", text: "G" },
+  { value: "1", text: "1" },
+  { value: "2", text: "2" },
+  { value: "3", text: "3" },
+  { value: "4", text: "4" },
+  { value: "5", text: "5" },
+  { value: "6", text: "6" },
+  { value: "BG", text: "BG" },
+  { value: "B1", text: "B1" },
+  { value: "B2", text: "B2" },
+  { value: "B3", text: "B3" },
+  { value: "B4", text: "B4" },
+  { value: "B5", text: "B5" },
+  { value: "B6", text: "B6" },
 ];
+
+for (let i = 0; i < locations.length; i++) {
+  locations[i].key = i;
+}
 
 // As small as this component is, PureComponent is a necessary performance
 //   optimization, since the long residents list takes long enough to rerender
