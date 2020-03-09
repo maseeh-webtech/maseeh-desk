@@ -13,7 +13,7 @@ async function updateResidents() {
           const newResident = new Resident({
             name: resident.FirstName + " " + resident.LastName,
             kerberos: resident.Kerberos,
-            room: resident.room,
+            room: Number(resident.room),
           });
 
           let savedResident = await newResident.save();
