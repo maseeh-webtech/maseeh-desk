@@ -134,6 +134,8 @@ router.post("/residents", [isDeskWorker], (req, res) => {
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,
+    kerberos: req.body.kerberos,
+    current: true,
   });
   newResident
     .save()

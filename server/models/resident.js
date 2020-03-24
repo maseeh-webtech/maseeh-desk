@@ -6,6 +6,7 @@ const ResidentSchema = new mongoose.Schema(
     name: String,
     kerberos: String,
     room: Number,
+    current: Boolean,
   },
   schemaOptions
 );
