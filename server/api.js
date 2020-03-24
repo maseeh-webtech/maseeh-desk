@@ -36,6 +36,14 @@ const isDeskWorker = (req, res, next) => {
   }
 };
 
+const sortString = (a, b) => {
+  a = a.resident.name.toLowerCase();
+  b = b.resident.name.toLowerCase();
+  if (a > b) return 1;
+  if (a < b) return -1;
+  return 0;
+};
+
 router.get("/packages", [isDeskWorker], (req, res) => {
   let query;
   if (req.query.noCheckedOut) {
@@ -47,7 +55,7 @@ router.get("/packages", [isDeskWorker], (req, res) => {
     .populate("resident")
     .populate("checkedInBy")
     .then((packages) => {
-      packages.sort((a, b) => a.resident.name > b.resident.name);
+      packages.sort(sortString);
       res.send(packages);
     });
 });
