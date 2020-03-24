@@ -22,9 +22,11 @@ class PackageList extends Component {
 
     // Populate the resident dropdown
     get("/api/residents").then((residents) => {
-      residents.forEach((res) => {
+      residents.forEach((res, i) => {
+        res.key = i;
         res.value = res.kerberos;
         res.text = res.name + " | " + res.room;
+        delete res.current;
       });
       this.setState({ residents });
     });
