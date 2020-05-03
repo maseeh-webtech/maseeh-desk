@@ -67,3 +67,12 @@ export function post(endpoint, params = {}) {
       throw error;
     });
 }
+
+export function simpleFilter(q, i) {
+  if (q === "") return true;
+
+  const query = q.toLowerCase();
+  const item = i.toLowerCase();
+
+  return item.indexOf(query) !== -1;
+}

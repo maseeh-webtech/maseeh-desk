@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Table, Modal, Button, Loader, Input } from "semantic-ui-react";
 import Package from "../modules/Package";
 import Checkin from "./CheckIn";
-import { get } from "../../utilities";
+import { get, simpleFilter } from "../../utilities";
 
 class PackageList extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class PackageList extends Component {
     });
 
     // Populate the resident dropdown
-    get("/api/residents").then((residents) => {
+    get("/api/residents", { current: true }).then((residents) => {
       residents.forEach((res, i) => {
         res.key = i;
         res.value = res.kerberos;
@@ -47,14 +47,6 @@ class PackageList extends Component {
     this.setState({ packages: this.state.packages.concat([pack]) });
   };
 
-  packageFilter = (pack) => {
-    const name = pack.resident.name.toLowerCase();
-    const kerberos = pack.resident.kerberos.toLowerCase();
-    const query = this.state.query.toLowerCase();
-
-    return name.indexOf(query) !== -1 || kerberos.indexOf(query) !== -1;
-  };
-
   render() {
     return (
       <>
@@ -71,7 +63,7 @@ class PackageList extends Component {
             Check in packages
           </Button>
         </div>
-        <div className="packages-filter">
+        <div className="filterbox">
           <Input
             icon="search"
             placeholder="Search..."
@@ -94,7 +86,7 @@ class PackageList extends Component {
 
             <Table.Body>
               {this.state.packages.flatMap((pack) => {
-                if (this.state.query === "" || this.packageFilter(pack)) {
+                if (simpleFilter(this.state.query, pack.resident.name + pack.resident.kerberos)) {
                   return (
                     <Package key={pack._id} package={pack} removePackage={this.removePackage} />
                   );

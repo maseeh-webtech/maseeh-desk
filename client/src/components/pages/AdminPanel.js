@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { Table, Message } from "semantic-ui-react";
-import { get } from "../../utilities";
+import { Table, Message, Input } from "semantic-ui-react";
+import { get, simpleFilter } from "../../utilities";
 import UserRow from "../modules/UserRow.js";
+import ResidentRow from "../modules/ResidentRow";
 
 class AdminPanel extends Component {
   constructor(props) {
@@ -9,7 +10,9 @@ class AdminPanel extends Component {
     this.state = {
       // The this.state.users array is not kept in sync with changes visually on the page or on the server.
       users: [],
+      userQuery: "",
       residents: [],
+      residentQuery: "",
     };
   }
 
@@ -17,9 +20,9 @@ class AdminPanel extends Component {
     get("/api/users").then((users) => {
       this.setState({ users });
     });
-    // get("/api/residents").then((residents) => {
-    //   this.setState({ residents });
-    // });
+    get("/api/residents").then((residents) => {
+      this.setState({ residents });
+    });
   }
 
   render() {
@@ -27,19 +30,61 @@ class AdminPanel extends Component {
       <>
         <h2>Settings</h2>
         <h2>Users</h2>
+        <p>
+          Modify existing accounts here. Toggling the "Desk worker" button gives access to check
+          in/out packages. Toggling the "Admin" button gives users access to this page.
+        </p>
+        <div className="filterbox">
+          <Input
+            icon="search"
+            placeholder="Search..."
+            fluid
+            onChange={(event) => this.setState({ userQuery: event.target.value })}
+          />
+        </div>
         <Table>
           <Table.Body>
-            {this.state.users.map((user) => {
-              return <UserRow key={user.id} user={user} self={this.props.user} />;
+            {this.state.users.flatMap((user) => {
+              if (simpleFilter(this.state.userQuery, user.username)) {
+                return <UserRow key={user.id} user={user} self={this.props.user} />;
+              } else {
+                return [];
+              }
             })}
           </Table.Body>
         </Table>
         <h2>Residents</h2>
+        <p>Edit residents here. This affects who packages can be checked in to.</p>
+        <p>
+          If "Current" is active (blue), they will show up when checking in packages. If it is grey,
+          they will not.
+        </p>
+        <div className="filterbox">
+          <Input
+            icon="search"
+            placeholder="Search..."
+            fluid
+            onChange={(event) => this.setState({ residentQuery: event.target.value })}
+          />
+        </div>
         <Table>
+          <Table.Header>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+          </Table.Header>
           <Table.Body>
-            {/* {this.state.residents.map((resident) => {
-              return <ResidentRow key={resident._id} resident={resident} />;
-            })} */}
+            {this.state.residents.flatMap((resident) => {
+              if (
+                simpleFilter(
+                  this.state.residentQuery,
+                  resident.name + resident.kerberos + "00" + resident.room
+                )
+              ) {
+                return <ResidentRow key={resident._id} resident={resident} />;
+              } else {
+                return [];
+              }
+            })}
           </Table.Body>
         </Table>
       </>

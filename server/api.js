@@ -37,6 +37,9 @@ const isDeskWorker = (req, res, next) => {
 };
 
 const sortString = (a, b) => {
+  if (!a.resident) {
+    console.log(a);
+  }
   a = a.resident.name.toLowerCase();
   b = b.resident.name.toLowerCase();
   if (a > b) return 1;
@@ -53,10 +56,13 @@ router.get("/packages", [isDeskWorker], (req, res) => {
   }
   Package.find(query)
     .populate("resident")
-    .populate("checkedInBy")
     .then((packages) => {
       packages.sort(sortString);
       res.send(packages);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500);
     });
 });
 
@@ -105,7 +111,6 @@ router.post("/checkin", [isDeskWorker], (req, res) => {
       resident: resident,
       location: req.body.location,
       trackingNumber: req.body.trackingNumber,
-      checkedInBy: req.user.id,
       expireAt: expireTime,
     });
     newPackage
@@ -134,10 +139,18 @@ router.post("/checkout", [isDeskWorker], (req, res) => {
 });
 
 router.get("/residents", [isDeskWorker], (req, res) => {
-  Resident.find({}).then((residents) => res.send(residents));
+  if (req.query.current) {
+    Resident.find({ current: true })
+      .sort({ room: 1 })
+      .then((residents) => res.send(residents));
+  } else {
+    Resident.find({})
+      .sort({ room: 1 })
+      .then((residents) => res.send(residents));
+  }
 });
 
-router.post("/residents", [isDeskWorker], (req, res) => {
+router.post("/resident/new", [isAdmin], (req, res) => {
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,
@@ -156,6 +169,27 @@ router.post("/residents", [isDeskWorker], (req, res) => {
     });
 });
 
+router.post("/resident/current", [isAdmin], (req, res) => {
+  Resident.findByIdAndUpdate(req.body.id, { current: req.body.current })
+    .then((resident) => res.send(resident))
+    .catch((err) => {
+      logger.error(err);
+      res.status(500).send({});
+    });
+});
+
+router.post("/resident/delete", [isAdmin], (req, res) => {
+  // First, remove any outstanding packages for that resident
+  Package.deleteMany({ resident: req.body.id })
+    .then(() => {
+      // Then, delete the resident themselves
+      Resident.findByIdAndDelete(req.body.id).then(() => {
+        res.send({ success: true });
+      });
+    })
+    .catch(() => res.send({ success: false }));
+});
+
 router.get("/users", [isAdmin], (_req, res) => {
   User.find({})
     .then((users) => res.send(users))
@@ -166,10 +200,6 @@ router.get("/users", [isAdmin], (_req, res) => {
 });
 
 router.post("/user/admin", [isAdmin], (req, res) => {
-  if (!req.user || !req.user.admin) {
-    res.status(403).send({ msg: "Admin permissions required" });
-    return;
-  }
   User.findByIdAndUpdate(req.body.id, { admin: req.body.admin })
     .then((user) => res.send(user))
     .catch((err) => {
