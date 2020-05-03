@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Modal, Button, Loader } from "semantic-ui-react";
+import { Table, Modal, Button, Loader, Input } from "semantic-ui-react";
 import Package from "../modules/Package";
 import Checkin from "./CheckIn";
 import { get } from "../../utilities";
@@ -11,6 +11,8 @@ class PackageList extends Component {
       packages: [],
       checkInOpen: false,
       residents: [],
+      loading: true,
+      query: "",
     };
   }
 
@@ -18,6 +20,7 @@ class PackageList extends Component {
     // Populate the main package list
     get("/api/packages", { noCheckedOut: true }).then((packages) => {
       this.setState({ packages });
+      this.setState({ loading: false });
     });
 
     // Populate the resident dropdown
@@ -44,6 +47,14 @@ class PackageList extends Component {
     this.setState({ packages: this.state.packages.concat([pack]) });
   };
 
+  packageFilter = (pack) => {
+    const name = pack.resident.name.toLowerCase();
+    const kerberos = pack.resident.kerberos.toLowerCase();
+    const query = this.state.query.toLowerCase();
+
+    return name.indexOf(query) !== -1 || kerberos.indexOf(query) !== -1;
+  };
+
   render() {
     return (
       <>
@@ -60,7 +71,17 @@ class PackageList extends Component {
             Check in packages
           </Button>
         </div>
-        {this.state.packages ? (
+        <div className="packages-filter">
+          <Input
+            icon="search"
+            placeholder="Search..."
+            fluid
+            onChange={(event) => this.setState({ query: event.target.value })}
+          />
+        </div>
+        {this.state.loading ? (
+          <Loader active />
+        ) : (
           <Table celled>
             <Table.Header>
               <Table.Row>
@@ -72,13 +93,17 @@ class PackageList extends Component {
             </Table.Header>
 
             <Table.Body>
-              {this.state.packages.map((pack) => {
-                return <Package key={pack._id} package={pack} removePackage={this.removePackage} />;
+              {this.state.packages.flatMap((pack) => {
+                if (this.state.query === "" || this.packageFilter(pack)) {
+                  return (
+                    <Package key={pack._id} package={pack} removePackage={this.removePackage} />
+                  );
+                } else {
+                  return [];
+                }
               })}
             </Table.Body>
           </Table>
-        ) : (
-          <Loader active />
         )}
       </>
     );

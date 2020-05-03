@@ -46,6 +46,10 @@ header {
   height: 36px;
 }
 
+.packages-filter {
+  width: 30vw;
+}
+
 /* Check in popup styles */
 .checkin-container {
   padding: 3%;
