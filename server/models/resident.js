@@ -5,6 +5,7 @@ const ResidentSchema = new mongoose.Schema(
   {
     name: String,
     kerberos: String,
+    email: String, // Note that email may or may not be existent. If not, then infer from kerberos
     room: Number,
     current: Boolean,
   },

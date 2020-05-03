@@ -12,9 +12,11 @@ async function updateResidents() {
         resident = residents[i];
         if (resident.email) {
           const newResident = new Resident({
-            name: resident.FirstName + " " + resident.LastName,
+            // name: resident.FirstName + " " + resident.LastName,
+            name: resident.name,
             // Remove @mit.edu from email to get kerberos
-            kerberos: resident.email.substring(0, resident.email.length - 8),
+            kerberos: resident.email.split("@")[0],
+            email: resident.email,
             room: Number(resident.room),
             current: true,
           });

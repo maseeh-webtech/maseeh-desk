@@ -33,7 +33,7 @@ class Home extends Component {
           ) : (
             <>
               <h1>Packages</h1>
-              <Message negative>You must be an desk worker to view this page.</Message>
+              <Message negative>You must be a desk worker to view this page.</Message>
             </>
           )
         ) : (

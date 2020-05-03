@@ -71,9 +71,16 @@ const sendEmail = (newPackage) => {
     },
   });
 
+  let emailAddress;
+  if (newPackage.resident.email) {
+    emailAddress = newPackage.resident.email;
+  } else {
+    emailAddress = `${newPackage.resident.kerberos}@mit.edu`;
+  }
+
   const mailOptions = {
     from: "Maseeh Desk <maseeh-desk@mit.edu>",
-    to: `${newPackage.resident.kerberos}@mit.edu`,
+    to: emailAddress,
     subject: `[Maseeh Desk] Package arrived: ${newPackage.trackingNumber}`,
     text:
       `You have a package at the Maseeh Hall front desk!\n\n` +
@@ -135,6 +142,7 @@ router.post("/residents", [isDeskWorker], (req, res) => {
     name: req.body.name,
     room: req.body.room,
     kerberos: req.body.kerberos,
+    email: req.body.email,
     current: true,
   });
   newResident
