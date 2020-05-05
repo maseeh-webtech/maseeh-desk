@@ -40,7 +40,7 @@ class ResidentRow extends PureComponent {
         <Table.Cell>{this.props.resident.name}</Table.Cell>
         <Table.Cell>{this.props.resident.kerberos}</Table.Cell>
         <Table.Cell>{email}</Table.Cell>
-        <Table.Cell>{this.props.resident.room}</Table.Cell>
+        <Table.Cell>{this.props.resident.room.toString().padStart(4, "0")}</Table.Cell>
         <Table.Cell collapsing>
           <Button onClick={this.handleToggleCurrent} primary={this.state.current}>
             Current

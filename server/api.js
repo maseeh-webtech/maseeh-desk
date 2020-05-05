@@ -151,11 +151,12 @@ router.get("/residents", [isDeskWorker], (req, res) => {
 });
 
 router.post("/resident/new", [isAdmin], (req, res) => {
+  console.log(req.body);
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,
     kerberos: req.body.kerberos,
-    email: req.body.email,
+    email: req.body.email ? req.body.email : null,
     current: true,
   });
   newResident
