@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import { Router, navigate, Match } from "@reach/router";
 import { Button } from "semantic-ui-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ import { socket } from "../client-socket.js";
 /**
  * Define the "App" component as a class.
  */
-class App extends Component {
+class App extends React.Component {
   // makes props available in this component
   constructor(props) {
     super(props);
@@ -44,7 +44,6 @@ class App extends Component {
         logout={this.handleLogout}
         loggedIn={this.state.user !== undefined}
         setUser={this.setUser}
-        providers={["google"]}
       />
     );
     return (
