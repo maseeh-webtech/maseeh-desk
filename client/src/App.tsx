@@ -13,7 +13,7 @@ import "~styles/utilities.css";
 import "~styles/styles.css";
 import { socket } from "~utilities/client-socket";
 
-import User from "~types/User";
+// import User from "~types/User";
 
 const App = () => {
   const [user, setUser] = React.useState<User | null>(null);
