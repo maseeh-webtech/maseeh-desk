@@ -1,10 +1,10 @@
 {
-  "name": "maseeh-desk-backend",
+  "name": "maseeh-desk-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for Maseeh Desk management application",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon -q | pino-pretty"
+    "dev": "nodemon -q | pino-pretty"
   },
   "author": "Kye Burchard <kyeb@mit.edu>",
   "license": "MIT",

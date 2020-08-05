@@ -1,0 +1,19 @@
+{
+  "name": "maseeh-desk",
+  "version": "1.0.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "repository": "https://github.com/maseeh-webtech/maseeh-desk",
+  "private": true,
+  "author": "Kye Burchard <kyeb@mit.edu>",
+  "license": "MIT",
+  "scripts": {
+    "client": "yarn workspace maseeh-desk-client dev",
+    "server": "yarn workspace maseeh-desk-server dev",
+    "build:client": "yarn workspace maseeh-desk-client build",
+    "tsc:client": "yarn workspace maseeh-desk-client tsc",
+    "build": "yarn build:client"
+  }
+}
