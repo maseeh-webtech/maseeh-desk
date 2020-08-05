@@ -1,0 +1,24 @@
+- hosts: maseeh
+  remote_user: kyeb
+  environment:
+    PATH: /home/kyeb/.nvm/versions/node/v14.2.0/bin:{{ ansible_env.PATH }}
+  tasks:
+    - name: get latest version from github
+      git:
+        repo: ssh://git@github.com/maseeh-webtech/maseeh-desk.git
+        version: master
+        dest: /srv/maseeh-desk
+
+    - name: update dependencies
+      yarn:
+        path: /srv/maseeh-desk
+
+    - name: rebuild client
+      command: yarn build:client
+      args:
+        chdir: /srv/maseeh-desk
+
+    - name: restart server
+      shell: "pm2 delete maseeh-desk; pm2 start --name maseeh-desk server.js"
+      args:
+        chdir: /srv/maseeh-desk/server
