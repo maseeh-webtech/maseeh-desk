@@ -22,13 +22,12 @@ const express = require("express"); // backend framework for our node server.
 
 // library that stores info about each connected user
 const session = require("express-session")({
-  secret: "my-secret",
+  secret: "my-super-secret-secret",
   resave: false,
   saveUninitialized: true,
 });
 
 const path = require("path"); // provide utilities for working with file and directory paths
-const { decorateApp } = require("@awaitjs/express");
 
 const api = require("./api");
 const auth = require("./auth");

@@ -2,4 +2,5 @@ node_modules
 logs.txt
 .env
 server/residents.csv
-client/dist/bundle.*
+.cache
+client/dist/*
