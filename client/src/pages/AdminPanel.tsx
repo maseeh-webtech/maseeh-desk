@@ -1,8 +1,11 @@
 import * as React from "react";
-import { Table, Message, Input, Button } from "semantic-ui-react";
-import { get, simpleFilter, post } from "~utilities";
-import UserRow from "~components/modules/UserRow";
-import ResidentRow from "~components/modules/ResidentRow";
+import { Table, Button } from "semantic-ui-react";
+import { get, simpleFilter, post } from "~utilities/utilities";
+import UserRow from "~modules/UserRow";
+import ResidentRow from "~modules/ResidentRow";
+import ControlledTextInput from "~modules/ControlledTextField";
+import AdminRequiredMessage from "~modules/AdminRequiredMessage";
+
 import UserContext from "~context/UserContext";
 
 import User from "~types/User";
@@ -48,7 +51,7 @@ function locationOf(
 }
 
 const AdminPanel = (_props: RouteComponentProps) => {
-  const user = useContext<User | null>(UserContext);
+  const user = useContext(UserContext);
 
   // State for list views
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -99,36 +102,32 @@ const AdminPanel = (_props: RouteComponentProps) => {
   const newResidentRow = (
     <Table.Row>
       <Table.HeaderCell>
-        <Input
-          fluid
-          placeholder="Name"
+        <ControlledTextInput
+          placeholder="name"
           value={newResidentName}
-          onChange={(e) => setNewResidentName(e.target.value)}
-        ></Input>
+          setValue={setNewResidentName}
+        />
       </Table.HeaderCell>
       <Table.HeaderCell>
-        <Input
-          fluid
+        <ControlledTextInput
           placeholder="Kerberos"
           value={newResidentKerberos}
-          onChange={(e) => setNewResidentKerberos(e.target.value)}
-        ></Input>
+          setValue={setNewResidentKerberos}
+        />
       </Table.HeaderCell>
       <Table.HeaderCell>
-        <Input
-          fluid
+        <ControlledTextInput
           placeholder="Email (leave blank for <kerberos>@mit.edu)"
           value={newResidentEmail}
-          onChange={(e) => setNewResidentEmail(e.target.value)}
-        ></Input>
+          setValue={setNewResidentEmail}
+        />
       </Table.HeaderCell>
       <Table.HeaderCell>
-        <Input
-          fluid
+        <ControlledTextInput
           placeholder="Room #"
           value={newResidentRoom}
-          onChange={(e) => setNewResidentRoom(e.target.value)}
-        ></Input>
+          setValue={setNewResidentRoom}
+        />
       </Table.HeaderCell>
       <Table.HeaderCell colSpan="2" textAlign="center">
         <Button primary onClick={handleNewResident}>
@@ -147,11 +146,11 @@ const AdminPanel = (_props: RouteComponentProps) => {
         in/out packages. Toggling the "Admin" button gives users access to this page.
       </p>
       <div className="filterbox">
-        <Input
+        <ControlledTextInput
           icon="search"
           placeholder="Search..."
-          fluid
-          onChange={(e) => setUserQuery(e.target.value)}
+          value={userQuery}
+          setValue={setUserQuery}
         />
       </div>
       <Table>
@@ -172,11 +171,11 @@ const AdminPanel = (_props: RouteComponentProps) => {
         they will not.
       </p>
       <div className="filterbox">
-        <Input
+        <ControlledTextInput
           icon="search"
           placeholder="Search..."
-          fluid
-          onChange={(e) => setResidentQuery(e.target.value)}
+          value={residentQuery}
+          setValue={setResidentQuery}
         />
       </div>
       <Table>
@@ -209,15 +208,7 @@ const AdminPanel = (_props: RouteComponentProps) => {
   return (
     <div>
       <h1>Admin Panel</h1>
-      {user ? (
-        user.admin ? (
-          adminPanel
-        ) : (
-          <Message negative>You must be an admin to view this page.</Message>
-        )
-      ) : (
-        <Message negative>You must be logged in to view this page.</Message>
-      )}
+      {user?.admin ? adminPanel : <AdminRequiredMessage />}
     </div>
   );
 };

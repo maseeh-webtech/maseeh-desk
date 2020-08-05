@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import App from "./components/App";
+import App from "~App";
 
 // renders React Component "Root" into the DOM element with ID "root"
 ReactDOM.render(<App />, document.getElementById("root"));

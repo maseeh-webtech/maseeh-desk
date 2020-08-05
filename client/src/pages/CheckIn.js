@@ -1,6 +1,6 @@
 import React, { Component, PureComponent } from "react";
 import { Button, Input, Dropdown, Form } from "semantic-ui-react";
-import { post } from "../../utilities";
+import { post } from "~utilities/utilities";
 
 const locations = [
   { value: "At desk", text: "At desk" },

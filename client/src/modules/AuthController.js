@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { get } from "../../utilities";
+import { get } from "~utilities/utilities";
 import LocalAuth from "./LocalAuth";
 import { Button } from "semantic-ui-react";
 

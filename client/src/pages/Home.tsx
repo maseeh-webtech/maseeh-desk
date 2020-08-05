@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import "../../utilities.css";
-import "./styles.css";
 import AuthController from "../modules/AuthController";
 import PackageList from "./PackageList";
 import { Message } from "semantic-ui-react";

@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import { Table, Button } from "semantic-ui-react";
-import { post } from "../../utilities";
+import { post } from "~utilities/utilities";
 
 class Package extends PureComponent {
   constructor(props) {

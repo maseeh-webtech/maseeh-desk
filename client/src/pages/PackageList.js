@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Table, Modal, Button, Loader, Input } from "semantic-ui-react";
 import Package from "../modules/Package";
 import Checkin from "./CheckIn";
-import { get, simpleFilter } from "../../utilities";
+import { get, simpleFilter } from "~utilities/utilities";
 
 class PackageList extends Component {
   constructor(props) {
