@@ -50,22 +50,16 @@ function locationOf(
   throw new Error("Should never get here...");
 }
 
-const AdminPanel = (_props: RouteComponentProps) => {
-  const user = useContext(UserContext);
+type NewResidentRowProps = {
+  addResident: (addResident: Resident) => void;
+};
 
-  // State for list views
-  const [residents, setResidents] = useState<Resident[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-
+const NewResidentRow = ({ addResident }: NewResidentRowProps) => {
   // State for new input fields
   const [newResidentName, setNewResidentName] = useState("");
   const [newResidentKerberos, setNewResidentKerberos] = useState("");
   const [newResidentEmail, setNewResidentEmail] = useState("");
   const [newResidentRoom, setNewResidentRoom] = useState("");
-
-  // State for filters
-  const [userQuery, setUserQuery] = useState("");
-  const [residentQuery, setResidentQuery] = useState("");
 
   const handleNewResident = () => {
     post("/api/resident/new", {
@@ -75,8 +69,7 @@ const AdminPanel = (_props: RouteComponentProps) => {
       room: newResidentRoom,
     })
       .then((newResident: Resident) => {
-        const newResidents = insertToSorted(residents, newResident);
-        setResidents(newResidents);
+        addResident(newResident);
         setNewResidentName("");
         setNewResidentKerberos("");
         setNewResidentEmail("");
@@ -90,20 +83,11 @@ const AdminPanel = (_props: RouteComponentProps) => {
       });
   };
 
-  useEffect(() => {
-    get("/api/users").then((newUsers: User[]) => {
-      setUsers(newUsers);
-    });
-    get("/api/residents").then((newResidents: Resident[]) => {
-      setResidents(newResidents);
-    });
-  }, []);
-
-  const newResidentRow = (
+  return (
     <Table.Row>
       <Table.HeaderCell>
         <ControlledTextInput
-          placeholder="name"
+          placeholder="Name"
           value={newResidentName}
           setValue={setNewResidentName}
         />
@@ -136,10 +120,80 @@ const AdminPanel = (_props: RouteComponentProps) => {
       </Table.HeaderCell>
     </Table.Row>
   );
+};
 
-  const adminPanel = (
+const ResidentsSection = () => {
+  const [residents, setResidents] = useState<Resident[]>([]);
+  const [residentQuery, setResidentQuery] = useState("");
+
+  useEffect(() => {
+    get("/api/residents").then((newResidents: Resident[]) => {
+      setResidents(newResidents);
+    });
+  }, []);
+
+  const addResident = (newResident: Resident) => {
+    const newResidents = insertToSorted(residents, newResident);
+    setResidents(newResidents);
+  };
+
+  return (
     <>
-      <h2>Settings</h2>
+      <h2>Residents</h2>
+      <p>Edit residents here. This affects who packages can be checked in to.</p>
+      <p>
+        If "Current" is active (blue), they will show up when checking in packages. If it is grey,
+        they will not.
+      </p>
+      <div className="filterbox">
+        <ControlledTextInput
+          icon="search"
+          placeholder="Search..."
+          value={residentQuery}
+          setValue={setResidentQuery}
+        />
+      </div>
+      <Table>
+        <Table.Header>
+          <NewResidentRow addResident={addResident} />
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Kerberos</Table.HeaderCell>
+            <Table.HeaderCell>Email address</Table.HeaderCell>
+            <Table.HeaderCell>Room</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {residents.flatMap((resident: Resident) => {
+            if (
+              simpleFilter(residentQuery, resident.name + resident.kerberos + "00" + resident.room)
+            ) {
+              return <ResidentRow key={resident._id} resident={resident} />;
+            } else {
+              return [];
+            }
+          })}
+        </Table.Body>
+      </Table>
+    </>
+  );
+};
+
+const UsersSection = () => {
+  const user = useContext(UserContext);
+  const [userQuery, setUserQuery] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    get("/api/users").then((newUsers: User[]) => {
+      setUsers(newUsers);
+    });
+  }, []);
+
+  return (
+    <>
       <h2>Users</h2>
       <p>
         Modify existing accounts here. Toggling the "Desk worker" button gives access to check
@@ -164,44 +218,18 @@ const AdminPanel = (_props: RouteComponentProps) => {
           })}
         </Table.Body>
       </Table>
-      <h2>Residents</h2>
-      <p>Edit residents here. This affects who packages can be checked in to.</p>
-      <p>
-        If "Current" is active (blue), they will show up when checking in packages. If it is grey,
-        they will not.
-      </p>
-      <div className="filterbox">
-        <ControlledTextInput
-          icon="search"
-          placeholder="Search..."
-          value={residentQuery}
-          setValue={setResidentQuery}
-        />
-      </div>
-      <Table>
-        <Table.Header>
-          {newResidentRow}
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Kerberos</Table.HeaderCell>
-            <Table.HeaderCell>Email address</Table.HeaderCell>
-            <Table.HeaderCell>Room</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {residents.flatMap((resident: Resident) => {
-            if (
-              simpleFilter(residentQuery, resident.name + resident.kerberos + "00" + resident.room)
-            ) {
-              return <ResidentRow key={resident._id} resident={resident} />;
-            } else {
-              return [];
-            }
-          })}
-        </Table.Body>
-      </Table>
+    </>
+  );
+};
+
+const AdminPanel = (_props: RouteComponentProps) => {
+  const user = useContext(UserContext);
+
+  const adminPanel = (
+    <>
+      <h2>Settings</h2>
+      <UsersSection />
+      <ResidentsSection />
     </>
   );
 

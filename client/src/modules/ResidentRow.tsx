@@ -53,4 +53,4 @@ const ResidentRow = ({ resident }: Props) => {
   );
 };
 
-export default ResidentRow;
+export default React.memo(ResidentRow);

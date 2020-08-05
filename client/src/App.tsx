@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Router, navigate } from "@reach/router";
 
 import TopNavBar from "~modules/TopNavBar";
@@ -11,9 +12,9 @@ import UserContext from "./context/UserContext";
 
 import "~styles/utilities.css";
 import "~styles/styles.css";
-import { socket } from "~utilities/client-socket";
+import { socket, reconnect } from "~utilities/client-socket";
 
-// import User from "~types/User";
+import User from "~types/User";
 
 const App = () => {
   const [user, setUser] = React.useState<User | null>(null);
@@ -22,6 +23,14 @@ const App = () => {
       setUser(user);
     });
   }, []);
+
+  // Hacky way of getting user set correctly after HMR
+  if (module.hot) {
+    module.hot.accept(() => {
+      reconnect();
+      socket.emit("request user");
+    });
+  }
 
   const handleLogout = () => {
     setUser(null);
@@ -49,4 +58,4 @@ const App = () => {
   );
 };
 
-export default App;
+ReactDOM.render(<App />, document.getElementById("root"));

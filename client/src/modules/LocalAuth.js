@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { post } from "~utilities/utilities";
 import { Button, Input, Form } from "semantic-ui-react";
+
+import { post } from "~utilities/utilities";
+import { socket } from "~utilities/client-socket";
 
 class LocalAuth extends Component {
   constructor(props) {
@@ -28,6 +30,7 @@ class LocalAuth extends Component {
       post("/auth/login", { username, password })
         .then((user) => {
           this.props.login(user);
+          socket.emit("request user");
         })
         .catch((error) => {
           if (error.status === 401) {

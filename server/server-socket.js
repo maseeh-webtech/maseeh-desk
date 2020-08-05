@@ -21,10 +21,17 @@ module.exports = {
       next();
     });
     io.on("connection", async (socket) => {
+      let userObj = null;
       if (socket.userId) {
-        const userObj = await User.findById(socket.userId).select("-password");
+        userObj = await User.findById(socket.userId).select("-password");
         socket.emit("user", userObj.toJSON());
       }
+
+      socket.on("request user", async () => {
+        if (userObj) {
+          socket.emit("user", userObj.toJSON());
+        }
+      });
     });
   },
 
