@@ -4,8 +4,7 @@
   "description": "Frontend for Maseeh Desk management application",
   "scripts": {
     "dev": "parcel watch src/index.html",
-    "build": "yarn tsc && parcel build src/index.html",
-    "test": "echo 'No tests yet.' && exit 0"
+    "build": "yarn tsc && parcel build src/index.html"
   },
   "author": "Kye Burchard <kyeb@mit.edu>",
   "license": "MIT",
