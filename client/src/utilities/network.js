@@ -9,17 +9,17 @@
  */
 
 // ex: formatParams({ some_key: "some_value", a: "b"}) => "some_key=some_value&a=b"
-function formatParams(params) {
+const formatParams = (params) => {
   // iterate of all the keys of params as an array,
   // map it to a new array of URL string encoded key,value pairs
   // join all the url params using an ampersand (&).
   return Object.keys(params)
     .map((key) => key + "=" + encodeURIComponent(params[key]))
     .join("&");
-}
+};
 
 // convert a fetch result to a JSON object with error handling for fetch and json errors
-function convertToJSON(res) {
+const convertToJSON = (res) => {
   if (!res.ok) {
     console.log(
       `API request failed with response status ${res.status} and text: ${res.statusText}`
@@ -37,10 +37,11 @@ function convertToJSON(res) {
         throw text;
       });
     });
-}
+};
+
 // Helper code to make a get request. Default parameter of empty JSON Object for params.
 // Returns a Promise to a JSON Object.
-export function get(endpoint, params = {}) {
+export const get = (endpoint, params = {}) => {
   const fullPath = endpoint + "?" + formatParams(params);
   return fetch(fullPath, {
     credentials: "include",
@@ -51,11 +52,11 @@ export function get(endpoint, params = {}) {
       console.log(`GET request to ${fullPath} failed with error:\n${error}`);
       throw error;
     });
-}
+};
 
 // Helper code to make a post request. Default parameter of empty JSON Object for params.
 // Returns a Promise to a JSON Object.
-export function post(endpoint, params = {}) {
+export const post = (endpoint, params = {}) => {
   return fetch(endpoint, {
     method: "post",
     headers: { "Content-type": "application/json" },
@@ -66,13 +67,4 @@ export function post(endpoint, params = {}) {
       console.log(`POST request to ${endpoint} failed with error:`, error);
       throw error;
     });
-}
-
-export function simpleFilter(q, i) {
-  if (q === "") return true;
-
-  const query = q.toLowerCase();
-  const item = i.toLowerCase();
-
-  return item.indexOf(query) !== -1;
-}
+};

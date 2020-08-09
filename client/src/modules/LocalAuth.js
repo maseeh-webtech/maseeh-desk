@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Button, Input, Form } from "semantic-ui-react";
 
-import { post } from "~utilities/utilities";
+import { post } from "~utilities";
 import { socket } from "~utilities/client-socket";
 
 class LocalAuth extends Component {

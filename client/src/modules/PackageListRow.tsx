@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Table, Button } from "semantic-ui-react";
 
-import { post } from "~utilities/utilities";
+import { post } from "~utilities";
 
 import PackageListRow from "~types/Package";
 

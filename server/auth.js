@@ -27,7 +27,7 @@ router.get("/logout", (req, res) => {
   res.send({});
 });
 
-async function createUser(username, password) {
+createUser = async (username, password) => {
   // Throws if user exists
   if (await User.findOne({ username })) {
     throw Error(ALREADY_REGISTERED_ERROR);
@@ -40,12 +40,12 @@ async function createUser(username, password) {
     deskworker: false,
   });
   return newUser.save();
-}
+};
 
 router.postAsync("/register", async (req, res) => {
   try {
     const user = await createUser(req.body.username, req.body.password);
-    req.login(user, function(err) {
+    req.login(user, () => {
       logger.info(`Local Auth: Registed user ID ${req.user.id}`);
       req.user.password = undefined;
       res.send(req.user);
@@ -59,7 +59,7 @@ router.postAsync("/register", async (req, res) => {
   }
 });
 
-router.post("/login", passport.authenticate("local"), function(req, res) {
+router.post("/login", passport.authenticate("local"), (req, res) => {
   logger.info(`Local Auth: Logged in user ID ${req.user.id}`);
   res.send(req.user);
 });

@@ -4,18 +4,12 @@ import { Table, Modal, Button, Loader, Input } from "semantic-ui-react";
 import Checkin from "./CheckIn";
 import PackageListRow from "~modules/PackageListRow";
 
-import { get, simpleFilter } from "~utilities/utilities";
+import { get, simpleFilter } from "~utilities";
 
-import Resident from "~types/Resident";
+import Resident, { ResidentListItem } from "~types/Resident";
 import Package from "~types/Package";
 
 const { useState, useEffect } = React;
-
-type ResidentListItem = {
-  key: number;
-  value: string;
-  text: string;
-};
 
 const PackageList = () => {
   const [packages, setPackages] = useState<Package[]>([]);

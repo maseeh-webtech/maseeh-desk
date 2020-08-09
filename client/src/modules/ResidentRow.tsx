@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Table, Button } from "semantic-ui-react";
 
-import { post } from "~utilities/utilities";
+import { post } from "~utilities";
 import Resident from "~types/Resident";
 
 const { useState } = React;

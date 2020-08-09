@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Table, Button } from "semantic-ui-react";
-import { get, simpleFilter, post } from "~utilities/utilities";
+import { get, simpleFilter, post } from "~utilities";
 import UserRow from "~modules/UserRow";
 import ResidentRow from "~modules/ResidentRow";
 import ControlledTextInput from "~modules/ControlledTextField";
@@ -184,6 +184,8 @@ const ResidentsSection = () => {
 const UsersSection = () => {
   const user = useContext(UserContext);
   const [userQuery, setUserQuery] = useState("");
+  // Note: this state is not kept updated, so that the entire table doesn't re-render when one user is changed
+  // TODO: see if this is a necessary optimization or not
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {

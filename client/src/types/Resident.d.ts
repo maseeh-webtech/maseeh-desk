@@ -7,4 +7,10 @@ interface Resident {
   current: boolean;
 }
 
+export type ResidentListItem = {
+  key: number;
+  value: string;
+  text: string;
+};
+
 export default Resident;
