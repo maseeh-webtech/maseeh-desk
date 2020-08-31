@@ -8,7 +8,12 @@
         repo: ssh://git@github.com/maseeh-webtech/maseeh-desk.git
         version: master
         dest: /srv/maseeh-desk
+      notify:
+        - update dependencies
+        - rebuild client
+        - restart server
 
+  handlers:
     - name: update dependencies
       yarn:
         path: /srv/maseeh-desk

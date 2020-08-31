@@ -2,7 +2,7 @@
 
 ## Getting started
 
-It should be as easy as running `yarn install`, then `yarn server` in one terminal and `npm client` in
+It should be as easy as running `yarn install`, then `yarn server` in one terminal and `yarn client` in
 another!
 
 You'll need a `.env` file in the `server/` directory with the Mongo connection string.
