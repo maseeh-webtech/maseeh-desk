@@ -6,7 +6,7 @@ import PackageListRow from "~modules/PackageListRow";
 
 import { get, simpleFilter } from "~utilities";
 
-import Resident, { ResidentListItem } from "~types/Resident";
+import { ResidentListItem } from "~types/Resident";
 import Package from "~types/Package";
 
 const { useState, useEffect } = React;
@@ -28,13 +28,13 @@ const PackageList = () => {
 
   useEffect(() => {
     // Populate the resident dropdown
-    get("/api/residents", { current: true }).then((residents: Resident[]) => {
-      const newResidents = residents.map((res, i) => ({
+    get("/api/residents", { current: true }).then((newResidents) => {
+      const residentListItems = newResidents.map((res: any, i: number) => ({
         key: i,
         value: res.kerberos,
         text: res.name + " | " + res.room,
       }));
-      setResidents(newResidents);
+      setResidents(residentListItems);
     });
   }, []);
 

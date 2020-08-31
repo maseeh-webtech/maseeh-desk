@@ -6,7 +6,7 @@ import ResidentSelector from "~modules/ResidentSelector";
 import LocationSelector from "~modules/LocationSelector";
 
 import Package from "~types/Package";
-import ResidentListItem from "~types/Resident";
+import { ResidentListItem } from "~types/Resident";
 
 const { useState } = React;
 

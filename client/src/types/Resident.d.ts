@@ -7,10 +7,10 @@ interface Resident {
   current: boolean;
 }
 
-export type ResidentListItem = {
+export interface ResidentListItem {
   key: number;
   value: string;
   text: string;
-};
+}
 
 export default Resident;

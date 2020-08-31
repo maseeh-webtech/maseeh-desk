@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Dropdown } from "semantic-ui-react";
 
-import Resident from "~types/Resident";
+import { ResidentListItem } from "~types/Resident";
 
 type Props = {
-  residents: Resident[];
+  residents: ResidentListItem[];
   kerberos: string;
   setKerb: (newKerb: string) => void;
 };
