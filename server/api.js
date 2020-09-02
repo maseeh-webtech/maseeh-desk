@@ -16,9 +16,6 @@ const User = require("./models/user");
 
 require("dotenv").config();
 
-// api endpoints: all these paths will be prefixed with "/api/"
-const router = express.Router();
-
 // Auth middleware
 const isAdmin = (req, res, next) => {
   if (!req.user || !req.user.admin) {
@@ -36,16 +33,16 @@ const isDeskWorker = (req, res, next) => {
   }
 };
 
-const sortString = (a, b) => {
-  if (!a.resident) {
-    console.log(a);
-  }
+const sortPackages = (a, b) => {
   a = a.resident.name.toLowerCase();
   b = b.resident.name.toLowerCase();
   if (a > b) return 1;
   if (a < b) return -1;
   return 0;
 };
+
+// api endpoints: all these paths will be prefixed with "/api/"
+const router = express.Router();
 
 router.get("/packages", [isDeskWorker], (req, res) => {
   let query;
@@ -56,17 +53,23 @@ router.get("/packages", [isDeskWorker], (req, res) => {
   }
   Package.find(query)
     .populate("resident")
+    .populate("checkedInBy")
     .then((packages) => {
-      packages.sort(sortString);
+      packages.sort(sortPackages);
       res.send(packages);
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       res.status(500);
     });
 });
 
 const sendEmail = (newPackage) => {
+  if (!process.env.KERBEROS || !process.env.KERBEROS_PASSWORD) {
+    logger.warn("Skipping email send (no credentials provided in environment)");
+    return;
+  }
+
   const transporter = nodemailer.createTransport({
     host: "outgoing.mit.edu",
     port: 587,
@@ -110,12 +113,12 @@ router.post("/checkin", [isDeskWorker], (req, res) => {
     const newPackage = new Package({
       resident: resident,
       location: req.body.location,
+      checkedInBy: req.user.id,
       trackingNumber: req.body.trackingNumber,
       expireAt: expireTime,
     });
     newPackage
       .save()
-      // .populate("checkedInBy")
       .then((savedPackage) => {
         sendEmail(savedPackage);
         res.send(savedPackage);
@@ -151,7 +154,6 @@ router.get("/residents", [isDeskWorker], (req, res) => {
 });
 
 router.post("/resident/new", [isAdmin], (req, res) => {
-  console.log(req.body);
   const newResident = new Resident({
     name: req.body.name,
     room: req.body.room,

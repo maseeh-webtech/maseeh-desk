@@ -1,8 +1,8 @@
 import * as React from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Modal } from "semantic-ui-react";
 import { get, simpleFilter, post } from "~utilities";
-import UserRow from "~modules/UserRow";
-import ResidentRow from "~modules/ResidentRow";
+import UserListRow from "~modules/UserListRow";
+import ResidentRow from "~modules/ResidentListRow";
 import ControlledTextInput from "~modules/ControlledTextField";
 import AdminRequiredMessage from "~modules/AdminRequiredMessage";
 
@@ -52,9 +52,10 @@ function locationOf(
 
 type NewResidentRowProps = {
   addResident: (addResident: Resident) => void;
+  residents: Resident[];
 };
 
-const NewResidentRow = ({ addResident }: NewResidentRowProps) => {
+const NewResidentRow = ({ addResident, residents }: NewResidentRowProps) => {
   // State for new input fields
   const [newResidentName, setNewResidentName] = useState("");
   const [newResidentKerberos, setNewResidentKerberos] = useState("");
@@ -62,6 +63,23 @@ const NewResidentRow = ({ addResident }: NewResidentRowProps) => {
   const [newResidentRoom, setNewResidentRoom] = useState("");
 
   const handleNewResident = () => {
+    for (const resident of residents) {
+      if (
+        newResidentName === resident.name ||
+        newResidentKerberos === resident.kerberos ||
+        newResidentEmail === resident.email
+      ) {
+        const confirm = window.confirm(
+          `There is already a resident "${resident.name}" (${
+            resident.kerberos || resident.email
+          }). Are you sure you want to add "${newResidentName}" (${
+            newResidentKerberos || newResidentEmail
+          })?`
+        );
+        if (!confirm) return;
+      }
+    }
+
     post("/api/resident/new", {
       name: newResidentName,
       kerberos: newResidentKerberos,
@@ -114,7 +132,11 @@ const NewResidentRow = ({ addResident }: NewResidentRowProps) => {
         />
       </Table.HeaderCell>
       <Table.HeaderCell colSpan="2" textAlign="center">
-        <Button primary onClick={handleNewResident}>
+        <Button
+          primary
+          onClick={handleNewResident}
+          disabled={!(newResidentName && newResidentKerberos && newResidentRoom)}
+        >
           Add
         </Button>
       </Table.HeaderCell>
@@ -122,7 +144,7 @@ const NewResidentRow = ({ addResident }: NewResidentRowProps) => {
   );
 };
 
-const ResidentsSection = () => {
+const ResidentListSection = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
   const [residentQuery, setResidentQuery] = useState("");
 
@@ -142,8 +164,9 @@ const ResidentsSection = () => {
       <h2>Residents</h2>
       <p>Edit residents here. This affects who packages can be checked in to.</p>
       <p>
-        If "Current" is active (blue), they will show up when checking in packages. If it is grey,
-        they will not.
+        If "Enabled" is turned on, they will show up when checking in packages. If it is disabled,
+        they will not. Deleting a resident is permanent, and also deletes any packages currently
+        checked in to them.
       </p>
       <div className="filterbox">
         <ControlledTextInput
@@ -153,15 +176,15 @@ const ResidentsSection = () => {
           setValue={setResidentQuery}
         />
       </div>
-      <Table>
+      <Table celled>
         <Table.Header>
-          <NewResidentRow addResident={addResident} />
+          <NewResidentRow addResident={addResident} residents={residents} />
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Kerberos</Table.HeaderCell>
             <Table.HeaderCell>Email address</Table.HeaderCell>
             <Table.HeaderCell>Room</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell>Enabled</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -181,7 +204,7 @@ const ResidentsSection = () => {
   );
 };
 
-const UsersSection = () => {
+const UserListSection = () => {
   const user = useContext(UserContext);
   const [userQuery, setUserQuery] = useState("");
   // Note: this state is not kept updated, so that the entire table doesn't re-render when one user is changed
@@ -198,8 +221,9 @@ const UsersSection = () => {
     <>
       <h2>Users</h2>
       <p>
-        Modify existing accounts here. Toggling the "Desk worker" button gives access to check
-        in/out packages. Toggling the "Admin" button gives users access to this page.
+        Modify existing accounts here. Giving users the "Desk worker" permission gives access to
+        check in/out packages. Giving the "Admin" permission allows users to access and modify this
+        page.
       </p>
       <div className="filterbox">
         <ControlledTextInput
@@ -209,11 +233,19 @@ const UsersSection = () => {
           setValue={setUserQuery}
         />
       </div>
-      <Table>
+      <Table celled>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Username</Table.HeaderCell>
+            <Table.HeaderCell collapsing>Desk worker permission</Table.HeaderCell>
+            <Table.HeaderCell collapsing>Admin permission</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
         <Table.Body>
           {users.flatMap((u) => {
             if (simpleFilter(userQuery, u.username)) {
-              return <UserRow key={u.id} user={u} self={user} />;
+              return <UserListRow key={u.id} user={u} self={user} />;
             } else {
               return [];
             }
@@ -230,8 +262,8 @@ const AdminPanel = (_props: RouteComponentProps) => {
   const adminPanel = (
     <>
       <h2>Settings</h2>
-      <UsersSection />
-      <ResidentsSection />
+      <UserListSection />
+      <ResidentListSection />
     </>
   );
 

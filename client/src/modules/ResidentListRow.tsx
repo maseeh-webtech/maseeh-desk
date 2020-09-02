@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Checkbox } from "semantic-ui-react";
 
 import { post } from "~utilities";
 import Resident from "~types/Resident";
@@ -14,6 +14,14 @@ const ResidentRow = ({ resident }: Props) => {
   const [current, setCurrent] = useState(resident.current);
 
   const handleDelete = () => {
+    const confirm = window.confirm(
+      `Are you sure you want to delete resident "${resident.name}" (${
+        resident.kerberos || resident.email
+      })?`
+    );
+    if (!confirm) {
+      return;
+    }
     post("/api/resident/delete", { id: resident._id })
       .then((res) => {
         if (res.success) {
@@ -35,14 +43,14 @@ const ResidentRow = ({ resident }: Props) => {
 
   return (
     <Table.Row>
-      <Table.Cell>{resident.name}</Table.Cell>
-      <Table.Cell>{resident.kerberos}</Table.Cell>
-      <Table.Cell>{email}</Table.Cell>
-      <Table.Cell>{resident.room && resident.room.toString().padStart(4, "0")}</Table.Cell>
+      <Table.Cell disabled={!current}>{resident.name}</Table.Cell>
+      <Table.Cell disabled={!current}>{resident.kerberos}</Table.Cell>
+      <Table.Cell disabled={!current}>{email}</Table.Cell>
+      <Table.Cell disabled={!current}>
+        {resident.room && resident.room.toString().padStart(4, "0")}
+      </Table.Cell>
       <Table.Cell collapsing>
-        <Button onClick={handleToggleCurrent} primary={current}>
-          Current
-        </Button>
+        <Checkbox toggle checked={current} onChange={handleToggleCurrent} />
       </Table.Cell>
       <Table.Cell collapsing>
         <Button onClick={handleDelete} negative>

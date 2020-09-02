@@ -77,6 +77,7 @@ const PackageList = () => {
             <Table.Row>
               <Table.HeaderCell>Resident</Table.HeaderCell>
               <Table.HeaderCell>Location</Table.HeaderCell>
+              <Table.HeaderCell>Checked in</Table.HeaderCell>
               <Table.HeaderCell>Tracking number</Table.HeaderCell>
               <Table.HeaderCell></Table.HeaderCell>
             </Table.Row>

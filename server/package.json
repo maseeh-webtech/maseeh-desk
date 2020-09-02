@@ -4,7 +4,7 @@
   "description": "Backend for Maseeh Desk management application",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon -q | pino-pretty"
+    "dev": "nodemon -q | pino-pretty -t HH:MM:ss -i pid,hostname"
   },
   "author": "Kye Burchard <kyeb@mit.edu>",
   "license": "MIT",
