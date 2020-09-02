@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table, Button, Modal } from "semantic-ui-react";
+import { Table, Button } from "semantic-ui-react";
 import { get, simpleFilter, post } from "~utilities";
 import UserListRow from "~modules/UserListRow";
 import ResidentRow from "~modules/ResidentListRow";
