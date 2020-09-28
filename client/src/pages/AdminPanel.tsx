@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Loader } from "semantic-ui-react";
 import { get, simpleFilter, post } from "~utilities";
 import UserListRow from "~modules/UserListRow";
 import ResidentRow from "~modules/ResidentListRow";
@@ -145,7 +145,7 @@ const NewResidentRow = ({ addResident, residents }: NewResidentRowProps) => {
 };
 
 const ResidentListSection = () => {
-  const [residents, setResidents] = useState<Resident[]>([]);
+  const [residents, setResidents] = useState<Resident[] | null>(null);
   const [residentQuery, setResidentQuery] = useState("");
 
   useEffect(() => {
@@ -155,6 +155,7 @@ const ResidentListSection = () => {
   }, []);
 
   const addResident = (newResident: Resident) => {
+    if (residents === null) return;
     const newResidents = insertToSorted(residents, newResident);
     setResidents(newResidents);
   };
@@ -176,30 +177,37 @@ const ResidentListSection = () => {
           setValue={setResidentQuery}
         />
       </div>
-      <Table celled>
-        <Table.Header>
-          <NewResidentRow addResident={addResident} residents={residents} />
-          <Table.Row>
-            <Table.HeaderCell>Name</Table.HeaderCell>
-            <Table.HeaderCell>Kerberos</Table.HeaderCell>
-            <Table.HeaderCell>Email address</Table.HeaderCell>
-            <Table.HeaderCell>Room</Table.HeaderCell>
-            <Table.HeaderCell>Enabled</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {residents.flatMap((resident: Resident) => {
-            if (
-              simpleFilter(residentQuery, resident.name + resident.kerberos + "00" + resident.room)
-            ) {
-              return <ResidentRow key={resident._id} resident={resident} />;
-            } else {
-              return [];
-            }
-          })}
-        </Table.Body>
-      </Table>
+      {residents === null ? (
+        <Loader /> // TODO: loader doesn't seem to show up yet
+      ) : (
+        <Table celled>
+          <Table.Header>
+            <NewResidentRow addResident={addResident} residents={residents} />
+            <Table.Row>
+              <Table.HeaderCell>Name</Table.HeaderCell>
+              <Table.HeaderCell>Kerberos</Table.HeaderCell>
+              <Table.HeaderCell>Email address</Table.HeaderCell>
+              <Table.HeaderCell>Room</Table.HeaderCell>
+              <Table.HeaderCell>Enabled</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {residents.flatMap((resident: Resident) => {
+              if (
+                simpleFilter(
+                  residentQuery,
+                  resident.name + resident.kerberos + "00" + resident.room
+                )
+              ) {
+                return <ResidentRow key={resident._id} resident={resident} />;
+              } else {
+                return [];
+              }
+            })}
+          </Table.Body>
+        </Table>
+      )}
     </>
   );
 };
@@ -209,7 +217,7 @@ const UserListSection = () => {
   const [userQuery, setUserQuery] = useState("");
   // Note: this state is not kept updated, so that the entire table doesn't re-render when one user is changed
   // TODO: see if this is a necessary optimization or not
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[] | null>(null);
 
   useEffect(() => {
     get("/api/users").then((newUsers: User[]) => {
@@ -233,25 +241,29 @@ const UserListSection = () => {
           setValue={setUserQuery}
         />
       </div>
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Username</Table.HeaderCell>
-            <Table.HeaderCell collapsing>Desk worker permission</Table.HeaderCell>
-            <Table.HeaderCell collapsing>Admin permission</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {users.flatMap((u) => {
-            if (simpleFilter(userQuery, u.username)) {
-              return <UserListRow key={u.id} user={u} self={user} />;
-            } else {
-              return [];
-            }
-          })}
-        </Table.Body>
-      </Table>
+      {users === null ? (
+        <Loader /> // TODO: loader doesn't seem to show up yet
+      ) : (
+        <Table celled>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Username</Table.HeaderCell>
+              <Table.HeaderCell collapsing>Desk worker permission</Table.HeaderCell>
+              <Table.HeaderCell collapsing>Admin permission</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {users.flatMap((u) => {
+              if (simpleFilter(userQuery, u.username)) {
+                return <UserListRow key={u.id} user={u} self={user} />;
+              } else {
+                return [];
+              }
+            })}
+          </Table.Body>
+        </Table>
+      )}
     </>
   );
 };

@@ -9,7 +9,7 @@ import { get, simpleFilter } from "~utilities";
 import { ResidentListItem } from "~types/Resident";
 import Package from "~types/Package";
 
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 const PackageList = () => {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -17,6 +17,7 @@ const PackageList = () => {
   const [residents, setResidents] = useState<ResidentListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const searchRef = useRef<Input>(null);
 
   useEffect(() => {
     // Populate the main package list
@@ -38,6 +39,10 @@ const PackageList = () => {
     });
   }, []);
 
+  useEffect(() => {
+    searchRef.current && searchRef.current.focus();
+  }, []);
+
   const openCheckIn = () => {
     setCheckInOpen(true);
   };
@@ -47,7 +52,9 @@ const PackageList = () => {
   };
 
   const addPackage = (pack: Package) => {
-    setPackages(packages.concat([pack]));
+    setPackages(
+      packages.concat([pack]).sort((a, b) => (a.resident.name >= b.resident.name ? 1 : -1))
+    );
   };
 
   return (
@@ -67,6 +74,7 @@ const PackageList = () => {
           placeholder="Search..."
           fluid
           onChange={(event) => setQuery(event.target.value)}
+          ref={searchRef}
         />
       </div>
       {loading ? (
