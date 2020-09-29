@@ -12,6 +12,7 @@
         - update dependencies
         - rebuild client
         - restart server
+        - update crontab
 
   handlers:
     - name: update dependencies
@@ -27,3 +28,9 @@
       shell: "pm2 delete maseeh-desk; pm2 start --name maseeh-desk server.js"
       args:
         chdir: /srv/maseeh-desk/server
+
+    - name: update crontab
+      cron:
+        minute: "0"
+        hour: "17"
+        job: node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1

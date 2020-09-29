@@ -47,8 +47,7 @@ async function main() {
       } sitting at desk. ` + `Search "library" in the packages list to see them all.`;
     const mailOptions = {
       from: "Maseeh Desk <maseeh-desk@mit.edu>",
-      // TODO: change to maseeh_desk@mit.edu
-      to: "kburchard1@gmail.com",
+      to: "maseeh_desk@mit.edu",
       subject: `[Maseeh Desk] Library book reminder`,
       text: emailText,
     };
