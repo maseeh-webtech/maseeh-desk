@@ -93,7 +93,9 @@ const PackageList = () => {
 
           <Table.Body>
             {packages.flatMap((pack) => {
-              if (simpleFilter(query, pack.resident.name + pack.resident.kerberos)) {
+              if (
+                simpleFilter(query, pack.resident.name + pack.resident.kerberos + pack.location)
+              ) {
                 return <PackageListRow key={pack._id} pack={pack} />;
               } else {
                 return [];

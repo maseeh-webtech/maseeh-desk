@@ -19,6 +19,7 @@ const locations = [
   { key: 0, value: "B4", text: "B4" },
   { key: 0, value: "B5", text: "B5" },
   { key: 0, value: "B6", text: "B6" },
+  { key: 0, value: "Library book", text: "Library book" },
 ];
 
 for (let i = 0; i < locations.length; i++) {

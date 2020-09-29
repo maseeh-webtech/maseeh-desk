@@ -131,7 +131,11 @@ router.post("/checkout", [isDeskWorker], (req, res) => {
   // Delete old packages after 3 months of being checked out
   const expireTime = new Date(Date.now());
   expireTime.setMonth(expireTime.getMonth() + 3);
-  Package.findByIdAndUpdate(req.body._id, { location: "Checked out", expireAt: expireTime })
+  Package.findByIdAndUpdate(req.body._id, {
+    location: "Checked out",
+    checkedOutTime: new Date(Date.now()),
+    expireAt: expireTime,
+  })
     .then((updatedPackage) => {
       res.send(updatedPackage);
     })
