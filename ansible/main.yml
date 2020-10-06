@@ -33,4 +33,4 @@
       cron:
         minute: "0"
         hour: "17"
-        job: node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
+        job: /home/kyeb/.nvm/versions/node/v14.2.0/bin/node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
