@@ -64,7 +64,7 @@ router.get("/packages", [isDeskWorker], (req, res) => {
     });
 });
 
-const sendEmail = (newPackage) => {
+const sendPackageEmail = (newPackage) => {
   if (!process.env.KERBEROS || !process.env.KERBEROS_PASSWORD) {
     logger.warn("Skipping email send (no credentials provided in environment)");
     return;
@@ -92,7 +92,7 @@ const sendEmail = (newPackage) => {
     to: emailAddress,
     subject: `[Maseeh Desk] Package arrived: ${newPackage.trackingNumber}`,
     text:
-      `You have a package at the Maseeh Hall front desk!\n\n` +
+      `You have a package waiting for you at the Maseeh Hall front desk!\n\n` +
       `Tracking number: ${newPackage.trackingNumber}\n` +
       `Delivered: ${newPackage.checkedInTime}\n` +
       `Location: ${newPackage.location}\n`,
@@ -120,7 +120,7 @@ router.post("/checkin", [isDeskWorker], (req, res) => {
     newPackage
       .save()
       .then((savedPackage) => {
-        sendEmail(savedPackage);
+        sendPackageEmail(savedPackage);
         res.send(savedPackage);
       })
       .catch((err) => logger.error(err));
