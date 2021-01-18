@@ -1,4 +1,4 @@
-# maseh-desk
+# maseeh-desk
 
 ## Getting started
 
