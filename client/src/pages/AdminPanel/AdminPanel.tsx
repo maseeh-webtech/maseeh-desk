@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Table, Button, Loader } from "semantic-ui-react";
+import { Table, Button } from "semantic-ui-react";
 import { get, simpleFilter, post } from "~utilities";
 import UserListRow from "~modules/UserListRow";
 import ResidentRow from "~modules/ResidentListRow";
@@ -11,6 +11,7 @@ import UserContext from "~context/UserContext";
 import User from "~types/User";
 import Resident from "~types/Resident";
 import { RouteComponentProps } from "@reach/router";
+import { FixedHeightLoader as FixedHeightLoader } from "~modules/FixedHeightLoader";
 
 const { useEffect, useState, useContext } = React;
 
@@ -178,7 +179,7 @@ const ResidentListSection = () => {
         />
       </div>
       {residents === null ? (
-        <Loader /> // TODO: loader doesn't seem to show up yet
+        <FixedHeightLoader />
       ) : (
         <Table celled>
           <Table.Header>
@@ -242,7 +243,7 @@ const UserListSection = () => {
         />
       </div>
       {users === null ? (
-        <Loader /> // TODO: loader doesn't seem to show up yet
+        <FixedHeightLoader />
       ) : (
         <Table celled>
           <Table.Header>

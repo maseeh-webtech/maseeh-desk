@@ -3,12 +3,12 @@ import * as ReactDOM from "react-dom";
 import { Router, navigate } from "@reach/router";
 
 import TopNavBar from "~modules/TopNavBar";
-import Home from "./pages/Home";
-import AdminPanel from "./pages/AdminPanel";
-import NotFound from "./pages/NotFound";
+import Home from "~pages/Home";
+import AdminPanel from "~pages/AdminPanel/AdminPanel";
+import NotFound from "~pages/NotFound";
 import AuthController from "~modules/AuthController";
 
-import UserContext from "./context/UserContext";
+import UserContext from "~context/UserContext";
 
 import "~styles/utilities.css";
 import "~styles/styles.css";
