@@ -7,17 +7,18 @@ import Resident from "~types/Resident";
 const { useState } = React;
 
 type Props = {
+  fetchResidents: () => void;
   resident: Resident;
 };
 
-const ResidentRow = ({ resident }: Props) => {
+const ResidentRow = ({ fetchResidents, resident }: Props) => {
   const [current, setCurrent] = useState(resident.current);
 
   const handleDelete = () => {
     const confirm = window.confirm(
       `Are you sure you want to delete resident "${resident.name}" (${
         resident.kerberos || resident.email
-      })?`
+      })?\n\n WARNING: this will also delete ALL packages currently checked into  ${resident.name}.`
     );
     if (!confirm) {
       return;
@@ -25,7 +26,7 @@ const ResidentRow = ({ resident }: Props) => {
     post("/api/resident/delete", { id: resident._id })
       .then((res) => {
         if (res.success) {
-          window.location.reload(false);
+          fetchResidents();
         } else {
           console.log(res);
         }
