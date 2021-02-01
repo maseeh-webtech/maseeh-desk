@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
-var schemaOptions = {};
+var schemaOptions = {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+};
 
 const ResidentSchema = new mongoose.Schema(
   {
@@ -11,6 +14,16 @@ const ResidentSchema = new mongoose.Schema(
   },
   schemaOptions
 );
+
+// virtual field to tell how many packages a given user has checked into them at this point in time.
+// need to use .populate("numPackages") in order to access this field.
+ResidentSchema.virtual("numPackages", {
+  ref: "package",
+  localField: "_id",
+  foreignField: "resident",
+  count: true,
+  match: { location: { $ne: "Checked out" } },
+});
 
 // compile model from schema
 module.exports = mongoose.model("resident", ResidentSchema);

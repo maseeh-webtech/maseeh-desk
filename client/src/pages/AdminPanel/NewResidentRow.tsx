@@ -86,7 +86,7 @@ export const NewResidentRow = ({ fetchResidents, residents }: NewResidentRowProp
           setValue={setNewResidentRoom}
         />
       </Table.HeaderCell>
-      <Table.HeaderCell colSpan="2" textAlign="center">
+      <Table.HeaderCell colSpan="3" textAlign="center">
         <Button
           primary
           onClick={handleNewResident}

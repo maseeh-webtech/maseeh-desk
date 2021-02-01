@@ -71,6 +71,12 @@ header {
   float: right;
 }
 
+.admin-delete-all {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .fixed-height-loader {
   height: 10vh;
   width: 100vw;

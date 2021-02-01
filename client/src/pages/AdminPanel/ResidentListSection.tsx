@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Table } from "semantic-ui-react";
+import { Table, Message, Button } from "semantic-ui-react";
 import { get, simpleFilter } from "~utilities";
 import ResidentRow from "~pages/AdminPanel/ResidentListRow";
 import ControlledTextInput from "~modules/ControlledTextField";
 import Resident from "~types/Resident";
 import { FixedHeightLoader as FixedHeightLoader } from "~modules/FixedHeightLoader";
 import { NewResidentRow } from "./NewResidentRow";
+import { post } from "~utilities";
 
 const { useEffect, useState } = React;
 
@@ -22,15 +23,48 @@ export const ResidentListSection = () => {
 
   useEffect(fetchResidents, []);
 
+  const deleteAllResidents = () => {
+    // slightly gross map and reduce to get a newline-separated string of the non-admin usernames
+    const confirm = window.confirm(
+      `Are you sure you want to delete all residents? This will affect the following residents:\n${residents
+        ?.map((resident) =>
+          resident.numPackages && resident.numPackages > 0 ? null : `${resident.name}\n`
+        )
+        .reduce((acc, s) => (s ? acc + s : acc), "\n")}`
+    );
+    if (!confirm) {
+      return;
+    }
+    post("/api/resident/delete_all")
+      .then((res) => {
+        if (res.success) {
+          fetchResidents();
+        } else {
+          console.log(res);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <h2>Residents</h2>
       <p>Edit residents here. This affects who packages can be checked in to.</p>
       <p>
         If "Enabled" is turned on, they will show up when checking in packages. If it is disabled,
-        they will not. Deleting a resident is permanent, and also deletes any packages currently
-        checked in to them.
+        they will not.
       </p>
+      <Message warning>
+        Deleting a single resident is permanent, and also deletes any packages currently checked in
+        to them.
+      </Message>
+      <Message className="admin-delete-all">
+        This button deletes all residents in the table who do not have any packages. It leaves
+        residents with packages alone.
+        <Button onClick={deleteAllResidents} negative>
+          Delete all residents
+        </Button>
+      </Message>
       <div className="filterbox">
         <ControlledTextInput
           icon="search"
@@ -51,6 +85,7 @@ export const ResidentListSection = () => {
               <Table.HeaderCell>Email address</Table.HeaderCell>
               <Table.HeaderCell>Room</Table.HeaderCell>
               <Table.HeaderCell>Enabled</Table.HeaderCell>
+              <Table.HeaderCell># of packages</Table.HeaderCell>
               <Table.HeaderCell></Table.HeaderCell>
             </Table.Row>
           </Table.Header>

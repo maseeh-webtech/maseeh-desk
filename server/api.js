@@ -152,6 +152,7 @@ router.get("/residents", [isDeskWorker], (req, res) => {
       .then((residents) => res.send(residents));
   } else {
     Resident.find({})
+      .populate("numPackages")
       .sort({ room: 1 })
       .then((residents) => res.send(residents));
   }
@@ -190,11 +191,22 @@ router.post("/resident/delete", [isAdmin], (req, res) => {
   Package.deleteMany({ resident: req.body.id })
     .then(() => {
       // Then, delete the resident themselves
-      Resident.findByIdAndDelete(req.body.id).then(() => {
-        res.send({ success: true });
-      });
+      Resident.findByIdAndDelete(req.body.id).then(() => res.send({ success: true }));
     })
     .catch(() => res.send({ success: false }));
+});
+
+router.post("/resident/delete_all", [isAdmin], async (req, res) => {
+  try {
+    const residents = await Resident.find({}).populate("numPackages");
+    const noPackageResidents = residents
+      .filter((resident) => resident.numPackages === 0)
+      .map((resident) => resident._id);
+    await Resident.deleteMany({ _id: { $in: noPackageResidents } });
+    res.send({ success: true });
+  } catch {
+    res.send({ success: false });
+  }
 });
 
 router.get("/users", [isAdmin], (_req, res) => {
@@ -226,6 +238,14 @@ router.post("/user/deskworker", [isAdmin], (req, res) => {
 
 router.post("/user/delete", [isAdmin], (req, res) => {
   User.findByIdAndDelete(req.body.id)
+    .then(() => {
+      res.send({ success: true });
+    })
+    .catch(() => res.send({ success: false }));
+});
+
+router.post("/user/delete_all", [isAdmin], (req, res) => {
+  User.deleteMany({ admin: false })
     .then(() => {
       res.send({ success: true });
     })

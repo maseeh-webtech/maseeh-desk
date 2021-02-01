@@ -5,6 +5,7 @@ interface Resident {
   email: ?string;
   room: number;
   current: boolean;
+  numPackages: ?number;
 }
 
 export interface ResidentListItem {

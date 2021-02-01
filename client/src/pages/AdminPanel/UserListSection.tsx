@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Table } from "semantic-ui-react";
+import { Table, Message, Button } from "semantic-ui-react";
 import { get, simpleFilter } from "~utilities";
 import UserListRow from "~pages/AdminPanel/UserListRow";
 import ControlledTextInput from "~modules/ControlledTextField";
 import UserContext from "~context/UserContext";
 import User from "~types/User";
 import { FixedHeightLoader as FixedHeightLoader } from "~modules/FixedHeightLoader";
+import { post } from "~utilities";
 
 const { useEffect, useState, useContext } = React;
 
@@ -16,11 +17,35 @@ export const UserListSection = () => {
   // TODO: see if this is a necessary optimization or not
   const [users, setUsers] = useState<User[] | null>(null);
 
-  useEffect(() => {
+  const fetchUsers = () => {
+    setUsers(null);
     get("/api/users").then((newUsers: User[]) => {
       setUsers(newUsers);
     });
-  }, []);
+  };
+
+  useEffect(fetchUsers, []);
+
+  const deleteAllUsers = () => {
+    // slightly gross map and reduce to get a newline-separated string of the non-admin usernames
+    const confirm = window.confirm(
+      `Are you sure you want to delete all desk workers? This will affect the following users:\n${users
+        ?.map((user) => (user.admin ? null : `${user.username}\n`))
+        .reduce((acc, s) => (s ? acc + s : acc), "\n")}`
+    );
+    if (!confirm) {
+      return;
+    }
+    post("/api/user/delete_all")
+      .then((res) => {
+        if (res.success) {
+          fetchUsers();
+        } else {
+          console.log(res);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <>
@@ -30,6 +55,12 @@ export const UserListSection = () => {
         check in/out packages. Giving the "Admin" permission allows users to access and modify this
         page.
       </p>
+      <Message className="admin-delete-all">
+        This button deletes all users in the table who are not admins. It leaves admin users alone.
+        <Button negative onClick={deleteAllUsers}>
+          Delete all desk workers
+        </Button>
+      </Message>
       <div className="filterbox">
         <ControlledTextInput
           icon="search"

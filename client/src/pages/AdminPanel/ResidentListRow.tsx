@@ -18,7 +18,12 @@ const ResidentRow = ({ fetchResidents, resident }: Props) => {
     const confirm = window.confirm(
       `Are you sure you want to delete resident "${resident.name}" (${
         resident.kerberos || resident.email
-      })?\n\n WARNING: this will also delete ALL packages currently checked into  ${resident.name}.`
+      })?${
+        // add a warning if the user has non-zero numPackages
+        resident.numPackages && resident.numPackages > 0
+          ? `\n\n WARNING: this will also delete all ${resident.numPackages} packages currently checked into  ${resident.name}.`
+          : ""
+      }`
     );
     if (!confirm) {
       return;
@@ -53,6 +58,7 @@ const ResidentRow = ({ fetchResidents, resident }: Props) => {
       <Table.Cell collapsing>
         <Checkbox toggle checked={current} onChange={handleToggleCurrent} />
       </Table.Cell>
+      <Table.Cell collapsing>{resident.numPackages}</Table.Cell>
       <Table.Cell collapsing>
         <Button onClick={handleDelete} negative>
           Delete
