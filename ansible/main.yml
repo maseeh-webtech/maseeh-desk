@@ -6,7 +6,7 @@
     - name: get latest version from github
       git:
         repo: ssh://git@github.com/maseeh-webtech/maseeh-desk.git
-        version: master
+        version: main
         dest: /srv/maseeh-desk
       notify:
         - update dependencies
@@ -34,4 +34,3 @@
         minute: "0"
         hour: "17"
         job: /home/kyeb/.nvm/versions/node/v14.2.0/bin/node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
-
