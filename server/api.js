@@ -177,6 +177,49 @@ router.post("/resident/new", [isAdmin], (req, res) => {
     });
 });
 
+// req: {resident: Array<{name: string, kerberos: string, email?: string, room: number}>}
+router.post("/resident/bulk", [isAdmin], async (req, res) => {
+  try {
+    const oldResidents = await Resident.find({});
+    for (let i = 0; i < req.body.residents.length; i++) {
+      const newResident = req.body.residents[i];
+
+      // match on kerberos to check if the new resident is already in the database
+      const matches = oldResidents.filter(
+        (oldResident) => oldResident.kerberos === newResident.kerberos
+      );
+
+      if (matches.length > 0) {
+        if (matches.length > 1) {
+          logger.warn({ matches }, "multiple matches");
+        }
+        const oldResident = matches[0];
+        oldResident.name = newResident.name;
+        oldResident.room = newResident.room;
+        oldResident.current = true;
+
+        await oldResident.save();
+        logger.info(oldResident.toObject(), "old resident updated!");
+      } else {
+        // no match found, assume new resident and insert
+        const newResidentDocument = new Resident({
+          name: newResident.name,
+          room: newResident.room,
+          kerberos: newResident.kerberos,
+          email: newResident.email ? newResident.email : null,
+          current: true,
+        });
+        await newResidentDocument.save();
+        logger.info(newResidentDocument.toObject(), "new resident added!");
+      }
+    }
+    res.send({ success: true });
+  } catch (err) {
+    logger.error(err);
+    res.send({ success: false });
+  }
+});
+
 router.post("/resident/current", [isAdmin], (req, res) => {
   Resident.findByIdAndUpdate(req.body.id, { current: req.body.current })
     .then((resident) => res.send(resident))
@@ -204,7 +247,8 @@ router.post("/resident/delete_all", [isAdmin], async (req, res) => {
       .map((resident) => resident._id);
     await Resident.deleteMany({ _id: { $in: noPackageResidents } });
     res.send({ success: true });
-  } catch {
+  } catch (err) {
+    logger.error(err);
     res.send({ success: false });
   }
 });

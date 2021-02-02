@@ -77,6 +77,13 @@ header {
   align-items: center;
 }
 
+.admin-csv {
+  width: 40vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .fixed-height-loader {
   height: 10vh;
   width: 100vw;
