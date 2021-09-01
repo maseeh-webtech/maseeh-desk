@@ -1,7 +1,7 @@
 - hosts: maseeh
-  remote_user: kyeb
+  remote_user: kxiong22
   environment:
-    PATH: /home/kyeb/.nvm/versions/node/v14.2.0/bin:{{ ansible_env.PATH }}
+    PATH: /home/kxiong22/.nvm/versions/node/v14.2.0/bin:{{ ansible_env.PATH }}
   tasks:
     - name: get latest version from github
       git:
@@ -33,4 +33,4 @@
       cron:
         minute: "0"
         hour: "17"
-        job: /home/kyeb/.nvm/versions/node/v14.2.0/bin/node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
+        job: /home/kxiong22/.nvm/versions/node/v14.2.0/bin/node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
