@@ -34,3 +34,10 @@
         minute: "0"
         hour: "17"
         job: /home/kxiong22/.nvm/versions/node/v14.2.0/bin/node /srv/maseeh-desk/server/library-reminder.js > /tmp/library-reminder.log 2>&1
+
+    - name: restart server weekly
+      cron:
+        minute: "0"
+        hour: "9"
+        weekday: "1"
+        job: "pm2 delete maseeh-desk; pm2 start --name maseeh-desk server.js"
