@@ -15,5 +15,8 @@
     "build:client": "yarn workspace maseeh-desk-client build",
     "tsc:client": "yarn workspace maseeh-desk-client tsc",
     "build": "yarn build:client"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1"
   }
 }
